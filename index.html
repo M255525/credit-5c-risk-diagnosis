@@ -110,6 +110,16 @@ h3.grp::before{content:'';width:4px;height:16px;border-radius:2px;background:var
 .samples button{border:1px dashed var(--brand2);background:var(--panel2);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:.84rem}
 .samples button:hover{background:var(--goodbg)}
 .samples{display:grid;gap:6px}
+.smp{border:1px solid var(--line);border-radius:12px;background:var(--panel2);margin:6px 0 4px}
+.smp[open]{background:var(--panel)}
+.smp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;font-weight:700;user-select:none}
+.smp>summary::-webkit-details-marker{display:none}
+.smp>summary::after{content:'▸';color:var(--sub);transition:transform .2s;flex:0 0 auto}
+.smp[open]>summary::after{transform:rotate(90deg)}
+.smp>summary:hover{color:var(--brand2)}
+.smp .ssv{margin-left:auto;font-weight:400;font-size:.8rem;color:var(--sub);text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.smp .samples{padding:0 14px 12px;margin:0}
+@media (max-width:520px){.smp>summary{flex-wrap:wrap}.smp>summary::after{order:2}.smp .ssv{flex-basis:100%;order:3;margin-left:0;text-align:left;white-space:normal}}
 .sgrp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .sgl{font-size:.8rem;color:var(--sub);min-width:10.5em;font-weight:500}
 @media (max-width:520px){.sgl{flex-basis:100%;min-width:0}}
@@ -332,9 +342,11 @@ ul.clean li{margin-bottom:6px}
 <main>
 <section class="tab panel on" id="tab0">
   <h2 class="sec">① 公司基本資料與財報數字</h2>
-  <p class="lead">先選<b>產業類別</b>（會套用該產業的比率判讀門檻），再挑一家上市櫃公司從「公開資訊觀測站」抄下最近一個年度的合併財報數字；或先按下方範例看看完整流程。數字一改，所有比率與評分會即時重算。</p>
-  <div><b style="font-size:.88rem">載入範例（全為虛構公司）：</b></div>
-  <div class="samples" id="samples"></div>
+  <p class="lead">先選<b>產業類別</b>（會套用該產業的比率判讀門檻），再挑一家上市櫃公司從「公開資訊觀測站」抄下最近一個年度的合併財報數字；或先展開下方「📂 載入範例公司」看看完整流程。數字一改，所有比率與評分會即時重算。</p>
+  <details class="smp" id="smpBox">
+    <summary><span class="sst">📂 載入範例公司</span><span class="ssv" id="smpSum">15 家虛構公司，依產業分組</span></summary>
+    <div class="samples" id="samples"></div>
+  </details>
   <div class="about-row" style="margin:4px 0 6px"><button class="btn small ghost" type="button" id="btnClear">🧹 清空，自己輸入</button></div>
 
   <h3 class="grp">公司概況</h3>
@@ -923,7 +935,7 @@ function bind(){
     if(t.hasAttribute('data-open-about')){ e.preventDefault(); openAbout(t.getAttribute('data-open-about')); return; }
     if(t.hasAttribute('data-fs')){ settings.fs = t.getAttribute('data-fs'); saveSettings(); applySettings(); return; }
     if(t.hasAttribute('data-theme-set')){ settings.theme = t.getAttribute('data-theme-set'); saveSettings(); applySettings(); return; }
-    if(t.hasAttribute('data-sample')){ var sm = D.SAMPLES.filter(function(x){ return x.key === t.getAttribute('data-sample'); })[0]; if(sm){ S = loadSample(sm); fillForm(); recalc(); toast('已載入範例「' + sm.label.replace(/^\S+\s/, '') + '」'); } return; }
+    if(t.hasAttribute('data-sample')){ var sm = D.SAMPLES.filter(function(x){ return x.key === t.getAttribute('data-sample'); })[0]; if(sm){ S = loadSample(sm); fillForm(); recalc(); $('smpBox').open = false; $('smpSum').textContent = '目前：' + sm.label.replace(/^\S+\s/, ''); toast('已載入範例「' + sm.label.replace(/^\S+\s/, '') + '」'); } return; }
     if(t.hasAttribute('data-cload')){ var c = loadCases()[+t.getAttribute('data-cload')]; if(c){ S = mergeState(c.s); fillForm(); recalc(); toast('已開啟「' + c.title + '」'); } return; }
     if(t.hasAttribute('data-cdel')){ var cs = loadCases(); var i = +t.getAttribute('data-cdel'); var tt = cs[i] && cs[i].title; cs.splice(i, 1); lsSet(CASE_KEY, JSON.stringify(cs)); renderCases(); toast('已刪除「' + (tt || '') + '」'); return; }
   });
@@ -948,6 +960,7 @@ function bind(){
   $('settingsBtn').addEventListener('click', function(){ toggleSettings(); });
   $('settingsClose').addEventListener('click', function(){ toggleSettings(false); });
   document.querySelectorAll('.set-sec').forEach(function(d){ d.addEventListener('toggle', saveFold); });
+  $('smpBox').addEventListener('toggle', function(){ lsSet(PREFIX + 'smpOpen', this.open ? '1' : ''); });
   $('foldAllOpen').addEventListener('click', function(){ document.querySelectorAll('.set-sec').forEach(function(d){ d.open = true; }); saveFold(); });
   $('foldAllClose').addEventListener('click', function(){ document.querySelectorAll('.set-sec').forEach(function(d){ d.open = false; }); saveFold(); });
   $('setAutoSave').addEventListener('change', function(){ settings.autoSave = this.checked; saveSettings(); applySettings(); if(!settings.autoSave) lsDel(DRAFT_KEY); else saveDraft(); });
@@ -956,7 +969,7 @@ function bind(){
   $('resetWeights').addEventListener('click', function(){ settings.weights = defaultWeights(); saveSettings(); applySettings(); recalc(); toast('已恢復預設權重'); });
   $('resetAvoid').addEventListener('click', function(){ settings.avoid = defaultAvoid(); saveSettings(); applySettings(); recalc(); toast('已恢復預設清單'); });
   $('resetSettings').addEventListener('click', function(){ settings = clone(DEFAULTS); settings.weights = defaultWeights(); settings.avoid = defaultAvoid(); saveSettings(); applySettings(); recalc(); toast('已恢復預設設定'); });
-  $('clearAll').addEventListener('click', function(){ if(!confirm('確定要清除本工具在這台瀏覽器的全部資料（設定、草稿、已儲存的診斷）？')) return; [SET_KEY, DRAFT_KEY, CASE_KEY, FOLD_KEY, WARN_KEY, TAB_KEY, PREFIX + 'marquee'].forEach(lsDel); location.reload(); });
+  $('clearAll').addEventListener('click', function(){ if(!confirm('確定要清除本工具在這台瀏覽器的全部資料（設定、草稿、已儲存的診斷）？')) return; [SET_KEY, DRAFT_KEY, CASE_KEY, FOLD_KEY, WARN_KEY, TAB_KEY, PREFIX + 'marquee', PREFIX + 'smpOpen'].forEach(lsDel); location.reload(); });
   $('saveCase').addEventListener('click', function(){ var title = (S.name || '未命名公司') + (S.year ? '（' + S.year + '）' : ''); var cs = loadCases(); var at = new Date().toLocaleString('zh-TW', {hour12:false});
     var idx = cs.findIndex(function(c){ return c.title === title; }); var rec = {title:title, at:at, s:clone(S)}; if(idx >= 0) cs[idx] = rec; else cs.unshift(rec); lsSet(CASE_KEY, JSON.stringify(cs.slice(0, 50))); renderCases(); toast('已儲存「' + title + '」'); });
   $('exportAll').addEventListener('click', function(){ download('信用5C診斷_' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify({tool:'credit-5c-risk-diagnosis', v:1, current:S, cases:loadCases(), settings:{weights:settings.weights, avoid:settings.avoid}}, null, 2), 'application/json'); });
@@ -979,7 +992,7 @@ function bind(){
 }
 
 /* ================= 啟動 ================= */
-buildForm(); applySettings(); restoreFold(); fillForm(); bind(); initMarquee(); initPwa();
+buildForm(); applySettings(); restoreFold(); $('smpBox').open = lsGet(PREFIX + 'smpOpen') === '1'; fillForm(); bind(); initMarquee(); initPwa();
 var t0 = +(lsGet(TAB_KEY) || 0); showTab(isFinite(t0) ? t0 : 0); window.scrollTo(0, 0);
 if(!lsGet(WARN_KEY)) openAbout();
 window.__c5 = {compute:compute, get S(){ return S; }, reportMd:reportMd, aiPrompt:aiPrompt, videoScript:videoScript};
