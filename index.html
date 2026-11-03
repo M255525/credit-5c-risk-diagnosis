@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>信用 5C 財務風險診斷</title>
+<meta name="description" content="以銀行放款角度，用信用 5C 與財務比率診斷中小企業／農業食品企業值不值得借錢給它">
+<meta name="theme-color" content="#1f3b2d">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2efe6;--panel:#fffdf8;--panel2:#f7f3ea;--ink:#1d2a22;--sub:#5d6a61;--line:#ddd5c4;
+  --brand:#1f3b2d;--brand2:#2f6b4c;--accent:#b8862b;--good:#2e8b57;--warn:#c98a12;--bad:#c0442e;
+  --goodbg:#e4f3ea;--warnbg:#fbf0d9;--badbg:#f8e3de;--chip:#ece6d8;--shadow:0 1px 2px rgba(30,40,30,.06),0 6px 18px rgba(30,40,30,.06);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121915;--panel:#1a231e;--panel2:#212c26;--ink:#e6eee8;--sub:#a3b2a8;--line:#33433a;
+  --brand:#9fd3b2;--brand2:#7cc39a;--accent:#e2b65d;--good:#5cc489;--warn:#e4ad3f;--bad:#ec7a63;
+  --goodbg:#1d3427;--warnbg:#3a3019;--badbg:#3d221d;--chip:#2a372f;--shadow:none}}
+:root[data-theme="dark"]{
+  --bg:#121915;--panel:#1a231e;--panel2:#212c26;--ink:#e6eee8;--sub:#a3b2a8;--line:#33433a;
+  --brand:#9fd3b2;--brand2:#7cc39a;--accent:#e2b65d;--good:#5cc489;--warn:#e4ad3f;--bad:#ec7a63;
+  --goodbg:#1d3427;--warnbg:#3a3019;--badbg:#3d221d;--chip:#2a372f;--shadow:none}
+*{box-sizing:border-box}
+html{font-size:16px}
+html.fs-l{font-size:17.5px}
+html.fs-xl{font-size:19px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',system-ui,sans-serif;line-height:1.65;-webkit-text-size-adjust:100%}
+a{color:var(--brand2)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 40px}
+
+#marqueeBar{position:fixed;top:0;left:0;right:0;height:30px;background:#1f3b2d;z-index:2100;overflow:hidden;display:none;align-items:center}
+#marqueeBar.show{display:flex}
+#marqueeTrack{display:inline-block;white-space:nowrap;padding-left:100%;font-size:13px;font-weight:600;color:#f3d58e;animation:marquee-scroll 30s linear infinite}
+#marqueeBar:hover #marqueeTrack{animation-play-state:paused}
+body.has-marquee{padding-top:30px}
+@keyframes marquee-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+header.top{padding:18px 0 10px}
+.toprow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.logo{width:48px;height:48px;flex:0 0 auto}
+.ttl{flex:1 1 320px;min-width:0}
+.ttl h1{margin:0;font-family:'Noto Serif TC',serif;font-size:1.6rem;letter-spacing:.02em;color:var(--brand)}
+.ttl p{margin:2px 0 0;color:var(--sub);font-size:.92rem}
+.hbtns{display:flex;flex-wrap:wrap;gap:6px}
+.hbtn,.btn{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 12px;cursor:pointer;text-decoration:none;color:var(--ink);font-size:.88rem;line-height:1.3}
+.hbtn:hover,.btn:hover{border-color:var(--brand2)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#10180f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#10180f}}
+.btn.ghost{background:transparent}
+.btn.small{padding:5px 10px;font-size:.82rem}
+.linkbtn{background:none;border:0;color:var(--brand2);cursor:pointer;padding:0 2px;text-decoration:underline;font-size:inherit}
+
+.warnbar{background:var(--warnbg);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:10px;padding:8px 12px;font-size:.85rem;color:var(--ink);margin-bottom:12px}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+#settings{margin-bottom:14px}
+.set-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.set-head h2{margin:0;flex:1;font-size:1.1rem}
+.set-sec{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--panel2)}
+.set-sec[open]{background:var(--panel)}
+.set-sec>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 14px;font-weight:700;user-select:none}
+.set-sec>summary::-webkit-details-marker{display:none}
+.set-sec>summary::after{content:'▸';margin-left:6px;color:var(--sub);transition:transform .2s;flex:0 0 auto}
+.set-sec[open]>summary::after{transform:rotate(90deg)}
+.set-sec>summary:hover{color:var(--brand2)}
+.set-sec .sst{flex:0 1 auto;min-width:0}
+.set-sec .ssv{margin-left:auto;font-weight:400;font-size:.8rem;color:var(--sub);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.set-body{padding:2px 14px 14px}
+.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.set-grid label{display:block;font-size:.84rem;color:var(--sub);margin-bottom:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--panel);padding:6px 12px;cursor:pointer}
+.seg button.on{background:var(--brand);color:#fff}
+.about-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.key-note{font-size:.8rem;color:var(--sub)}
+input[type=text],input[type=number],select,textarea{width:100%;border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:7px 10px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand2) 20%,transparent)}
+textarea{resize:vertical;min-height:70px}
+
+nav.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px 0 10px;position:sticky;top:0;z-index:50;background:var(--bg)}
+body.has-marquee nav.tabs{top:30px}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:500;font-size:.92rem;white-space:nowrap}
+nav.tabs button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+:root[data-theme="dark"] nav.tabs button.on{color:#10180f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) nav.tabs button.on{color:#10180f}}
+nav.tabs .n{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--chip);color:var(--ink);font-size:.75rem;margin-right:6px}
+nav.tabs button.on .n{background:rgba(255,255,255,.25);color:inherit}
+
+.scorechip{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.86rem;color:var(--sub);margin:0 0 12px}
+.scorechip b{color:var(--ink)}
+.grade{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;font-weight:700;color:#fff;font-family:'Noto Serif TC',serif}
+.g-A{background:var(--good)}.g-B{background:#5d9a4a}.g-C{background:var(--warn)}.g-D{background:var(--bad)}
+
+section.tab{display:none}
+section.tab.on{display:block}
+h2.sec{font-family:'Noto Serif TC',serif;font-size:1.25rem;margin:0 0 4px;color:var(--brand)}
+p.lead{margin:0 0 14px;color:var(--sub);font-size:.92rem}
+h3.grp{font-size:1rem;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+h3.grp::before{content:'';width:4px;height:16px;border-radius:2px;background:var(--accent)}
+
+.samples{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.samples button{border:1px dashed var(--brand2);background:var(--panel2);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:.84rem}
+.samples button:hover{background:var(--goodbg)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px 14px}
+.fld label{display:block;font-size:.84rem;font-weight:500;margin-bottom:3px}
+.fld .h{display:block;font-size:.74rem;color:var(--sub);margin-top:2px;line-height:1.4}
+.fld input.num{text-align:right;font-variant-numeric:tabular-nums}
+.tip{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.84rem;color:var(--sub);margin-top:10px}
+.tip b{color:var(--ink)}
+
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.q{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel2)}
+.q .qt{font-weight:700;margin-bottom:2px}
+.q .qh{font-size:.78rem;color:var(--sub);margin-bottom:8px}
+.q label.opt{display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:.88rem}
+.q label.opt:hover{background:var(--panel)}
+.q label.opt input{margin-top:5px;accent-color:var(--brand2)}
+.q label.opt .sc{margin-left:auto;font-size:.75rem;color:var(--sub);white-space:nowrap}
+
+.dash{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:16px;align-items:start}
+.verdict{text-align:center;padding:18px 14px}
+.verdict .big{font-family:'Noto Serif TC',serif;font-size:3.2rem;line-height:1;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.verdict .gradeL{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:14px;color:#fff;font-size:1.8rem;font-weight:700;font-family:'Noto Serif TC',serif}
+.verdict .rec{font-weight:700;margin-top:10px;font-size:1.05rem}
+.verdict .recd{font-size:.86rem;color:var(--sub);margin-top:4px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:.86rem;margin-top:12px;text-align:left}
+.kv span:nth-child(even){font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.flags{margin-top:12px;text-align:left}
+.flag{background:var(--badbg);color:var(--ink);border-left:3px solid var(--bad);border-radius:6px;padding:6px 10px;font-size:.82rem;margin-top:6px}
+.radarbox{display:flex;justify-content:center}
+.radarbox svg{width:100%;max-width:400px;height:auto}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px}
+.ccard{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel2)}
+.ccard .ch{display:flex;align-items:baseline;gap:6px}
+.ccard .ch b{font-size:1.05rem}
+.ccard .ch em{font-style:normal;font-size:.75rem;color:var(--sub)}
+.ccard .ch .s{margin-left:auto;font-weight:700;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.bar{height:8px;border-radius:4px;background:var(--chip);overflow:hidden;margin:6px 0}
+.bar i{display:block;height:100%;border-radius:4px}
+.ccard .cq{font-size:.78rem;color:var(--sub)}
+.ccard ul{margin:6px 0 0;padding-left:1.1em;font-size:.8rem}
+.lv-good{color:var(--good)}.lv-watch{color:var(--warn)}.lv-bad{color:var(--bad)}
+.bg-good{background:var(--good)}.bg-watch{background:var(--warn)}.bg-bad{background:var(--bad)}
+
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.rt{width:100%;border-collapse:collapse;font-size:.86rem;min-width:720px}
+table.rt th,table.rt td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+table.rt th{font-size:.78rem;color:var(--sub);font-weight:500;background:var(--panel2)}
+table.rt td.v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.rt td.f{font-size:.76rem;color:var(--sub)}
+table.rt td.w{font-size:.78rem;color:var(--sub);max-width:340px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+.pill{display:inline-block;font-size:.72rem;border-radius:999px;padding:1px 8px;background:var(--chip);white-space:nowrap}
+
+.avoid{display:grid;gap:8px}
+.av{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel2)}
+.av.hit{background:var(--badbg);border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.av .no{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;background:var(--chip);font-family:'Noto Serif TC',serif}
+.av.hit .no{background:var(--bad);color:#fff}
+.av .t{font-weight:700}
+.av .d{font-size:.78rem;color:var(--sub)}
+.av .auto{font-size:.78rem;margin-top:2px}
+.av select{width:auto;font-size:.82rem;padding:5px 8px}
+.avsum{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.avsum .big{font-family:'Noto Serif TC',serif;font-size:2rem;font-weight:700}
+
+.report{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;font-size:.92rem}
+.report h3{font-family:'Noto Serif TC',serif;margin:18px 0 6px;font-size:1.05rem;color:var(--brand)}
+.report h3:first-child{margin-top:0}
+.report table{width:100%;border-collapse:collapse;font-size:.86rem;margin:6px 0}
+.report td,.report th{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.report th{background:var(--panel2);font-weight:500;white-space:nowrap}
+.report .rh{text-align:center;border-bottom:2px solid var(--brand);padding-bottom:10px;margin-bottom:12px}
+.report .rh h2{font-family:'Noto Serif TC',serif;margin:0;font-size:1.35rem}
+.report .rh div{font-size:.82rem;color:var(--sub)}
+.report ol,.report ul{margin:4px 0;padding-left:1.4em}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+
+.cases{display:grid;gap:6px;margin-top:8px}
+.case{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--panel);font-size:.86rem}
+.case span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.avedit{display:grid;gap:6px}
+.avedit .r{display:grid;grid-template-columns:26px 1fr 120px;gap:6px;align-items:center}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.wgrid input{text-align:right}
+
+footer.foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;color:var(--sub);font-size:.84rem;margin-top:26px;padding-top:14px;border-top:1px solid var(--line)}
+
+.modal{position:fixed;inset:0;background:rgba(10,20,14,.5);display:none;align-items:center;justify-content:center;z-index:3000;padding:16px}
+.modal.show{display:flex}
+.modal .box{background:var(--panel);border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow:auto;padding:18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal h2{margin:0 0 10px;font-size:1.15rem;display:flex;align-items:center;gap:8px}
+.modal h2 .x{margin-left:auto;border:0;background:none;font-size:1.1rem;cursor:pointer;color:var(--sub)}
+ul.clean{padding-left:1.2em;margin:4px 0 12px;font-size:.88rem}
+ul.clean li{margin-bottom:6px}
+.creator{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.86rem;margin-bottom:12px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#1f3b2d;color:#fff;padding:10px 16px;border-radius:10px;font-size:.88rem;opacity:0;pointer-events:none;transition:.25s;z-index:4000;max-width:calc(100% - 32px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#printReport{display:none}
+
+@media (max-width:860px){
+  .dash{grid-template-columns:1fr}
+  .ttl h1{font-size:1.35rem}
+  .set-sec>summary{flex-wrap:wrap}
+  .set-sec .sst{flex:1 1 0}
+  .set-sec>summary::after{order:2}
+  .set-sec .ssv{flex:1 1 100%;order:3;margin-left:0;text-align:left;white-space:normal}
+  .qgrid{grid-template-columns:1fr}
+  .report{padding:14px}
+}
+@media (max-width:520px){
+  .fgrid{grid-template-columns:1fr 1fr}
+  .hbtn{padding:6px 9px;font-size:.8rem}
+  .av{grid-template-columns:32px 1fr}
+  .av select{grid-column:2}
+  .avedit .r{grid-template-columns:22px 1fr}
+  .avedit .r select{grid-column:2}
+}
+@media (max-width:360px){.fgrid{grid-template-columns:1fr}}
+@media print{
+  body{background:#fff;padding:0!important}
+  body>*:not(#printReport){display:none!important}
+  #printReport{display:block!important;color:#000}
+  #printReport .report{border:0;padding:0;font-size:11pt;background:#fff;color:#000}
+  #printReport .report th{background:#f1f1f1}
+  #printReport .report h3{color:#1f3b2d}
+  @page{margin:16mm 14mm}
+}
+</style>
+</head>
+<body>
+<div id="marqueeBar"><div id="marqueeTrack"></div></div>
+
+<div class="wrap">
+<header class="top">
+  <div class="toprow">
+    <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" rx="12" fill="#1f3b2d"/><path d="M24 8l13 5v9c0 8.5-5.6 15-13 18-7.4-3-13-9.5-13-18v-9z" fill="none" stroke="#f3d58e" stroke-width="2.2" stroke-linejoin="round"/><rect x="17" y="25" width="3.4" height="7" rx="1" fill="#fff"/><rect x="22.3" y="21" width="3.4" height="11" rx="1" fill="#fff"/><rect x="27.6" y="17" width="3.4" height="15" rx="1" fill="#9fd3b2"/><path d="M16 19c3-4 7-5 10-4" fill="none" stroke="#9fd3b2" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <div class="ttl"><h1>信用 5C 財務風險診斷</h1><p>站在銀行放款的角度，用信用 5C、償債比率與「創業十大避免」評估一家中小企業／農業食品企業值不值得借錢給它</p></div>
+    <div class="hbtns">
+      <a class="hbtn" href="manual.html" target="_blank" rel="noopener">📖 操作手冊</a>
+      <button class="hbtn" type="button" id="settingsBtn" aria-expanded="false">⚙ 常用設定</button>
+      <button class="hbtn" type="button" data-install>📲 加入主畫面</button>
+      <button class="hbtn" type="button" data-open-about>⚠ 使用警語</button>
+      <button class="hbtn" type="button" data-open-about="creator">👤 創作者</button>
+    </div>
+  </div>
+</header>
+
+<div class="warnbar"><b>⚠ 使用警語：</b>本工具是教學用的授信分析練習框架，評分門檻與權重為簡化示意，結果<b>不構成貸款核准、投資或財務建議</b>；內建範例公司全為虛構；分析真實公司時請以公開資訊觀測站等官方財報為準；資料只存在你的瀏覽器。<button class="linkbtn" type="button" data-open-about>完整警語</button></div>
+
+<section class="panel" id="settings" hidden>
+  <div class="set-head"><h2>⚙ 常用設定</h2>
+    <button class="btn ghost small" type="button" id="foldAllOpen">全部展開</button>
+    <button class="btn ghost small" type="button" id="foldAllClose">全部收合</button>
+    <button class="btn ghost small" type="button" id="settingsClose">✕ 關閉</button></div>
+  <details class="set-sec" data-sec="display">
+    <summary><span class="sst">🖥 顯示與儲存</span><span class="ssv" id="sumDisplay"></span></summary>
+    <div class="set-body"><div class="set-grid">
+      <div><label>字級</label><div class="seg" id="fsSeg"><button type="button" data-fs="">標準</button><button type="button" data-fs="l">大</button><button type="button" data-fs="xl">特大</button></div></div>
+      <div><label>介面配色</label><div class="seg" id="themeSeg"><button type="button" data-theme-set="">跟隨系統</button><button type="button" data-theme-set="light">淺色</button><button type="button" data-theme-set="dark">深色</button></div></div>
+      <div><label><input type="checkbox" id="setMarquee"> 顯示頂部跑馬燈公告</label><label><input type="checkbox" id="setAutoSave"> 自動保存目前的診斷（重新整理不會消失）</label></div>
+    </div></div>
+  </details>
+  <details class="set-sec" data-sec="weights">
+    <summary><span class="sst">⚖ 5C 權重</span><span class="ssv" id="sumWeights"></span></summary>
+    <div class="set-body">
+      <div class="wgrid" id="weightGrid"></div>
+      <div class="about-row" style="margin-top:10px"><button class="btn small" type="button" id="resetWeights">↺ 恢復預設權重</button><span class="key-note">權重會自動換算成比例，總和不必剛好 100。不同銀行、不同授信產品（擔保放款、信用放款、信保專案）重視的面向不一樣，可以調整後比較結果。</span></div>
+    </div>
+  </details>
+  <details class="set-sec" data-sec="avoid">
+    <summary><span class="sst">🚫 創業十大避免清單</span><span class="ssv" id="sumAvoid"></span></summary>
+    <div class="set-body">
+      <p class="key-note" style="margin-top:0">預設清單是依「創業十大避免」主題整理的版本。可以改寫成你課堂上用的文字，並指定它對應 5C 的哪一面；改了文字之後，自動偵測規則仍會沿用同一列的規則。</p>
+      <div class="avedit" id="avoidEdit"></div>
+      <div class="about-row" style="margin-top:10px"><button class="btn small" type="button" id="resetAvoid">↺ 恢復預設清單</button></div>
+    </div>
+  </details>
+  <details class="set-sec" data-sec="report">
+    <summary><span class="sst">🖨 報告署名</span><span class="ssv" id="sumReport"></span></summary>
+    <div class="set-body"><div class="set-grid">
+      <div><label for="setAuthor">分析人／組別</label><input type="text" id="setAuthor" placeholder="例如：第 3 組 王小明"></div>
+      <div><label for="setOrg">單位／課程名稱</label><input type="text" id="setOrg" placeholder="例如：中小企業財務診斷實務"></div>
+    </div></div>
+  </details>
+  <details class="set-sec" data-sec="data">
+    <summary><span class="sst">💾 資料管理</span><span class="ssv" id="sumData"></span></summary>
+    <div class="set-body">
+      <div class="about-row">
+        <button class="btn small primary" type="button" id="saveCase">💾 儲存目前診斷</button>
+        <button class="btn small" type="button" id="exportAll">⬇ 匯出全部（JSON）</button>
+        <label class="btn small" style="cursor:pointer">⬆ 匯入 JSON<input type="file" id="importFile" accept=".json,application/json" hidden></label>
+        <button class="btn small" type="button" id="resetSettings">↺ 恢復預設設定</button>
+        <button class="btn small" type="button" id="clearAll" style="color:var(--bad)">🗑 清除全部本機資料</button>
+      </div>
+      <div class="cases" id="caseList"></div>
+    </div>
+  </details>
+  <details class="set-sec" data-sec="about">
+    <summary><span class="sst">ℹ 關於本工具</span><span class="ssv">操作手冊・警語・創作者・加入主畫面・訪客數</span></summary>
+    <div class="set-body"><div class="about-row">
+      <a class="btn ghost small" href="manual.html" target="_blank" rel="noopener">📖 操作手冊</a>
+      <button class="btn ghost small" type="button" data-open-about>⚠ 使用警語</button>
+      <button class="btn ghost small" type="button" data-open-about="creator">👤 創作者資訊</button>
+      <button class="btn ghost small" type="button" data-install>📲 加入主畫面</button>
+      <span class="key-note" style="display:inline-flex;align-items:center;gap:6px">訪客數 <img src="https://visitor-badge.laobi.icu/badge?page_id=m255525.credit5criskdiagnosis" alt="訪客次數" height="20" loading="lazy"></span>
+    </div></div>
+  </details>
+</section>
+
+<nav class="tabs" id="tabs" aria-label="分頁">
+  <button type="button" data-tab="0" class="on"><span class="n">1</span>公司與財報</button>
+  <button type="button" data-tab="1"><span class="n">2</span>品格與條件</button>
+  <button type="button" data-tab="2"><span class="n">3</span>5C 診斷結果</button>
+  <button type="button" data-tab="3"><span class="n">4</span>創業十大避免</button>
+  <button type="button" data-tab="4"><span class="n">5</span>授信審查意見書</button>
+</nav>
+<div class="scorechip" id="scoreChip"></div>
+
+<main>
+<section class="tab panel on" id="tab0">
+  <h2 class="sec">① 公司基本資料與財報數字</h2>
+  <p class="lead">挑一家上市櫃的農業或食品相關公司，從「公開資訊觀測站」抄下最近一個年度的合併財報數字；或先按下方範例看看完整流程。數字一改，所有比率與評分會即時重算。</p>
+  <div><b style="font-size:.88rem">載入範例（全為虛構公司）：</b></div>
+  <div class="samples" id="samples"></div>
+  <div class="about-row" style="margin:4px 0 6px"><button class="btn small ghost" type="button" id="btnClear">🧹 清空，自己輸入</button></div>
+
+  <h3 class="grp">公司概況</h3>
+  <div class="fgrid">
+    <div class="fld" style="grid-column:span 2"><label for="i_name">公司名稱</label><input type="text" id="i_name" data-b="name" placeholder="例如：某某食品股份有限公司"></div>
+    <div class="fld"><label for="i_industry">主要業務／次產業</label><input type="text" id="i_industry" data-b="industry" placeholder="例如：飼料、蛋品、冷凍食品"></div>
+    <div class="fld"><label for="i_year">財報年度</label><input type="text" id="i_year" data-b="year" placeholder="例如：2025"></div>
+    <div class="fld"><label for="i_type">公司類型</label><select id="i_type" data-b="type"><option>上市</option><option>上櫃</option><option>興櫃</option><option>未上市（中小企業）</option><option>未上市（微型企業）</option></select></div>
+  </div>
+  <div id="finFields"></div>
+  <div class="tip">💡 <b>數字去哪裡找？</b>公開資訊觀測站（mops.twse.com.tw）→「財務報表」→ 資產負債表、綜合損益表、現金流量表；「利息費用」在財報附註的財務成本。<b>單位一致即可</b>（建議千元），借款金額也要用同一個單位。可以直接貼上「1,234,567」或財報上的「(30,000)」負數格式。</div>
+
+  <h3 class="grp">這次的借款申請（假設情境）</h3>
+  <div class="fgrid">
+    <div class="fld"><label for="l_amt">申請金額</label><input class="num" type="text" inputmode="decimal" id="l_amt" data-l="amt"><span class="h">與財報同單位</span></div>
+    <div class="fld"><label for="l_yrs">借款期間（年）</label><input class="num" type="text" inputmode="decimal" id="l_yrs" data-l="yrs"><span class="h">本息平均攤還</span></div>
+    <div class="fld"><label for="l_rate">年利率（%）</label><input class="num" type="text" inputmode="decimal" id="l_rate" data-l="rate"></div>
+    <div class="fld" style="grid-column:span 2"><label for="l_purpose">借款用途</label><input type="text" id="l_purpose" data-l="purpose" placeholder="例如：購置冷凍設備、收購週轉金"></div>
+    <div class="fld"><label for="l_ctype">擔保品類型</label><select id="l_ctype" data-l="ctype"></select><span class="h" id="ltvHint"></span></div>
+    <div class="fld"><label for="l_cval">擔保品估值</label><input class="num" type="text" inputmode="decimal" id="l_cval" data-l="cval"><span class="h">鑑價或帳面價值；信保填保證金額</span></div>
+    <div class="fld"><label for="l_guar">保證人</label><select id="l_guar" data-l="guar"></select></div>
+  </div>
+  <div class="about-row" style="margin-top:16px"><button class="btn primary" type="button" data-go="1">下一步：品格與條件 →</button></div>
+</section>
+
+<section class="tab panel" id="tab1">
+  <h2 class="sec">② 品格（Character）與條件（Conditions）</h2>
+  <p class="lead">5C 裡有兩個 C 沒辦法只看財報：銀行會查信用報告、看新聞與重大訊息、訪談經營者，也會評估產業與借款用途。請依你查到的資訊選最接近的描述。</p>
+  <h3 class="grp">品格：願不願意還錢</h3>
+  <div class="qgrid" id="qChar"></div>
+  <h3 class="grp">條件：外部環境與借款用途</h3>
+  <div class="qgrid" id="qCond"></div>
+  <div class="about-row" style="margin-top:16px"><button class="btn" type="button" data-go="0">← 上一步</button><button class="btn primary" type="button" data-go="2">看診斷結果 →</button></div>
+</section>
+
+<section class="tab panel" id="tab2">
+  <h2 class="sec">③ 5C 診斷結果</h2>
+  <p class="lead">財務比率換算成 0～100 分，再依 5C 權重加總成信用分數。紅色警示會直接壓低評等（例如有退票紀錄、淨值為負、借了之後還不起）。</p>
+  <div id="dash"></div>
+  <h3 class="grp">財務比率明細</h3>
+  <div class="tw"><table class="rt" id="ratioTable"></table></div>
+  <p class="key-note">門檻為一般授信審查常見的參考區間，不同產業（例如資本密集的畜牧、季節性的稻米收購）應再對照同業平均調整判讀。</p>
+  <div class="about-row" style="margin-top:16px"><button class="btn" type="button" data-go="1">← 上一步</button><button class="btn primary" type="button" data-go="3">檢核創業十大避免 →</button></div>
+</section>
+
+<section class="tab panel" id="tab3">
+  <h2 class="sec">④ 創業十大避免 × 5C 檢核</h2>
+  <p class="lead">把「創業十大避免」當成銀行審查時的地雷清單：系統依財報與你的選擇自動偵測，你也可以手動改判。每一條都對應到 5C 的某一面，方便說明「為什麼銀行會在意」。</p>
+  <div class="avsum" id="avSum"></div>
+  <div class="avoid" id="avoidList"></div>
+  <div class="about-row" style="margin-top:16px"><button class="btn" type="button" data-go="2">← 上一步</button><button class="btn primary" type="button" data-go="4">產生審查意見書 →</button></div>
+</section>
+
+<section class="tab panel" id="tab4">
+  <h2 class="sec">⑤ 授信審查意見書</h2>
+  <p class="lead">依前面的分析自動整理成銀行授信審查意見書的格式，可以直接當作業、課程講義或影片素材的底稿。</p>
+  <div class="actions">
+    <button class="btn primary" type="button" id="btnPrint">🖨 列印／存成 PDF</button>
+    <button class="btn" type="button" id="btnCopy">📋 複製全文</button>
+    <button class="btn" type="button" id="btnMd">⬇ 下載 Markdown</button>
+    <button class="btn" type="button" id="btnPrompt">🤖 複製 AI 深化分析提示詞</button>
+    <button class="btn" type="button" id="btnScript">🎬 複製課程／影片講稿大綱</button>
+  </div>
+  <div class="report" id="report"></div>
+</section>
+</main>
+
+<footer class="foot">
+  <span>信用 5C 財務風險診斷・By Mark Tsai</span>
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=m255525.credit5criskdiagnosis" alt="訪客次數" height="20" loading="lazy">
+  <a class="linkbtn" href="manual.html" target="_blank" rel="noopener">📖 操作手冊</a>
+  <button class="linkbtn" type="button" data-open-about="creator">👤 創作者資訊</button>
+  <button class="linkbtn" type="button" data-open-about>⚠ 使用警語</button>
+</footer>
+</div>
+
+<div class="modal" id="about" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="box">
+    <h2 id="aboutTitle">ℹ 關於信用 5C 財務風險診斷 <button class="x" type="button" id="aboutClose" aria-label="關閉">✕</button></h2>
+    <h3 style="margin:4px 0">⚠ 使用警語</h3>
+    <ul class="clean">
+      <li>本工具是<b>教學用</b>的授信分析練習框架。比率門檻、分數換算、5C 權重與擔保品貸放成數都是<b>簡化示意</b>，與任何金融機構的實際授信政策無關；結果<b>不代表貸款能否核准，也不構成投資、財務或法律建議</b>。</li>
+      <li>內建的 5 家範例公司（禾豐、綠野、金穗、海灣、青田）及其數字<b>全部虛構</b>，如與真實公司名稱雷同純屬巧合。</li>
+      <li>分析真實上市櫃公司時，請以<b>公開資訊觀測站</b>等官方公告的財報為準，並注意財報期間與單位；品格與條件的判斷涉及主觀評估，公開發表時請避免對特定公司做未經查證的負面指控。</li>
+      <li>請勿輸入個人身分證字號、聯徵報告原件等個人資料。所有資料只存在本機瀏覽器（localStorage），不會上傳；清除瀏覽器資料就會消失，重要的診斷請到「⚙ 常用設定 → 資料管理」匯出 JSON 備份。</li>
+      <li>「創業十大避免」清單為依主題整理的預設版本，可在常用設定中改寫成你的課程版本。</li>
+    </ul>
+    <div class="creator" id="creatorBox">
+      <b>👤 創作者：Mark Tsai（蔡豐全）</b><br>
+      勞動力發展署創業顧問、小型企業人力提升計畫顧問、農業部科技農企業計畫業師、SBIR 評審委員；專長企業診斷輔導、銷售數據分析、AI 工具運用與政府補助計畫申請。<br>
+      聯絡：<a href="mailto:tsaimark@gmail.com">tsaimark@gmail.com</a>　完整經歷請見 <a href="manual.html#creator" target="_blank" rel="noopener">操作手冊・創作者</a>
+    </div>
+    <div class="about-row">
+      <a class="btn ghost small" href="manual.html" target="_blank" rel="noopener">📖 操作手冊</a>
+      <button class="btn ghost small" type="button" data-install>📲 加入主畫面</button>
+      <span class="key-note" style="display:inline-flex;align-items:center;gap:6px">訪客數 <img src="https://visitor-badge.laobi.icu/badge?page_id=m255525.credit5criskdiagnosis" alt="訪客次數" height="20" loading="lazy"></span>
+      <button class="btn primary small" type="button" id="aboutOk" style="margin-left:auto">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="printReport"></div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+'use strict';
+var D = window.C5;
+var PREFIX = 'c5rd_', SET_KEY = PREFIX + 'settings', DRAFT_KEY = PREFIX + 'draft', CASE_KEY = PREFIX + 'cases', FOLD_KEY = PREFIX + 'fold', WARN_KEY = PREFIX + 'warned', TAB_KEY = PREFIX + 'tab';
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+var toastTimer;
+function toast(msg){ var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3000); }
+function num(v){
+  if(v === '' || v == null) return null;
+  if(typeof v === 'number') return isFinite(v) ? v : null;
+  var s = String(v).trim().replace(/[,\s，]/g, ''); var neg = false;
+  if(/^\(.*\)$/.test(s)){ neg = true; s = s.slice(1, -1); }
+  if(s === '' || s === '-') return null;
+  var n = parseFloat(s); if(!isFinite(n)) return null; return neg ? -n : n;
+}
+function fmtN(v, d){ if(v == null || !isFinite(v)) return '—'; d = d == null ? 0 : d; return Number(v).toLocaleString('zh-TW', {minimumFractionDigits:d, maximumFractionDigits:d}); }
+function copyText(t, msg){
+  function fb(){ var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast(msg || '已複製'); }catch(e){ toast('複製失敗，請手動選取'); } ta.remove(); }
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(function(){ toast(msg || '已複製'); }, fb); } else fb();
+}
+function download(name, text, type){ var b = new Blob([text], {type:type || 'text/plain;charset=utf-8'}); var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+
+/* ================= 狀態 ================= */
+function defaultAvoid(){ return D.AVOID.map(function(a){ return {t:a.t, c:a.c}; }); }
+function defaultWeights(){ var w = {}; D.FIVE_C.forEach(function(c){ w[c.k] = c.w; }); return w; }
+var DEFAULTS = {fs:'', theme:'', marquee:true, autoSave:true, author:'', org:'', weights:defaultWeights(), avoid:defaultAvoid()};
+function freshState(){
+  var f = {}; D.FIELDS.forEach(function(g){ g.items.forEach(function(it){ f[it.k] = ''; }); });
+  var ch = {}, co = {};
+  D.CHARACTER.forEach(function(q){ ch[q.k] = 0; }); D.CONDITIONS.forEach(function(q){ co[q.k] = 1; });
+  return {name:'', industry:'', year:'', type:'上市', f:f, loan:{amt:'', yrs:5, rate:2.5, purpose:'', ctype:'re', cval:'', guar:'owner'}, ch:ch, co:co, av:{}};
+}
+var settings = (function(){ var s = {}; try{ s = JSON.parse(lsGet(SET_KEY) || '{}') || {}; }catch(e){}
+  var o = Object.assign(clone(DEFAULTS), s);
+  if(!o.weights || typeof o.weights !== 'object') o.weights = defaultWeights();
+  D.FIVE_C.forEach(function(c){ if(typeof o.weights[c.k] !== 'number') o.weights[c.k] = c.w; });
+  if(!Array.isArray(o.avoid) || o.avoid.length !== D.AVOID.length) o.avoid = defaultAvoid();
+  return o; })();
+function saveSettings(){ lsSet(SET_KEY, JSON.stringify(settings)); }
+var S = (function(){ if(!settings.autoSave) return null; try{ var d = JSON.parse(lsGet(DRAFT_KEY) || 'null'); if(d && d.f) return mergeState(d); }catch(e){} return null; })() || loadSample(D.SAMPLES[0]);
+function mergeState(d){ var s = freshState(); s.name = d.name || ''; s.industry = d.industry || ''; s.year = d.year || ''; s.type = d.type || s.type;
+  Object.keys(s.f).forEach(function(k){ if(d.f && d.f[k] != null) s.f[k] = d.f[k]; });
+  if(d.loan) Object.keys(s.loan).forEach(function(k){ if(d.loan[k] != null) s.loan[k] = d.loan[k]; });
+  if(d.ch) Object.keys(s.ch).forEach(function(k){ if(typeof d.ch[k] === 'number') s.ch[k] = d.ch[k]; });
+  if(d.co) Object.keys(s.co).forEach(function(k){ if(typeof d.co[k] === 'number') s.co[k] = d.co[k]; });
+  if(d.av && typeof d.av === 'object') s.av = d.av;
+  return s; }
+function loadSample(sm){ var s = mergeState(clone(sm.d)); s.av = {}; return s; }
+function saveDraft(){ if(settings.autoSave) lsSet(DRAFT_KEY, JSON.stringify(S)); }
+
+/* ================= 計算 ================= */
+function scoreOf(v, pts, dir){
+  if(v == null || isNaN(v)) return null;
+  if(v === Infinity) return dir > 0 ? 100 : 0;
+  if(v === -Infinity) return dir > 0 ? 0 : 100;
+  var p = pts.slice(), x = v;
+  if(dir < 0){ p = p.map(function(n){ return -n; }); x = -v; }
+  var S_ = [0, 40, 75, 100];
+  if(x <= p[0]) return 0;
+  if(x >= p[3]) return 100;
+  for(var i = 0; i < 3; i++){ if(x <= p[i+1]){ return S_[i] + (S_[i+1] - S_[i]) * (x - p[i]) / (p[i+1] - p[i]); } }
+  return 100;
+}
+function lvOf(s){ if(s == null) return 'na'; return s >= 75 ? 'good' : (s >= 40 ? 'watch' : 'bad'); }
+var LV_TXT = {good:'良好', watch:'警戒', bad:'風險', na:'資料不足'};
+function annuity(r, n){ if(!(n > 0)) return null; return r > 0 ? (1 - Math.pow(1 + r, -n)) / r : n; }
+function div(a, b){ if(a == null || b == null) return null; if(b === 0) return a > 0 ? Infinity : (a < 0 ? -Infinity : null); return a / b; }
+
+function compute(){
+  var f = {}; Object.keys(S.f).forEach(function(k){ f[k] = num(S.f[k]); });
+  var L = {amt:num(S.loan.amt), yrs:num(S.loan.yrs), rate:num(S.loan.rate)};
+  var ebitda = (f.op != null && f.da != null) ? f.op + f.da : (f.op != null ? f.op : null);
+  var debt = (f.sd != null || f.ld != null) ? (f.sd || 0) + (f.ld || 0) : null;
+  var cogs = (f.rev != null && f.gp != null) ? f.rev - f.gp : null;
+  var fac = annuity((L.rate || 0) / 100, L.yrs);
+  var newPay = (L.amt != null && fac) ? L.amt / fac : null;
+  var service = (f.int != null || f.pd != null) ? (f.int || 0) + (f.pd || 0) : null;
+  var R = {};
+  function put(k, v, disp){ var def = D.RATIOS.filter(function(r){ return r.k === k; })[0]; var s = def.pts ? scoreOf(v, def.pts, def.dir) : null; R[k] = {v:v, s:s, disp:disp}; }
+  put('cr', div(f.ca, f.cl));
+  put('qr', (f.ca != null && f.cl != null) ? div(f.ca - (f.inv || 0), f.cl) : null);
+  if(f.int === 0 && f.op != null){ put('icr', f.op >= 0 ? Infinity : -Infinity, f.op >= 0 ? '無利息負擔' : '本業虧損'); }
+  else put('icr', div(f.op, f.int));
+  put('dscr', service === 0 && ebitda != null ? (ebitda >= 0 ? Infinity : -Infinity) : div(ebitda, service), service === 0 ? '無還本付息' : null);
+  put('dscr2', (service != null || newPay != null) ? div(ebitda, (service || 0) + (newPay || 0)) : null);
+  put('cfocl', div(f.cfo, f.cl));
+  var opm = div(f.op, f.rev); put('opm', opm != null && isFinite(opm) ? opm * 100 : null);
+  var gm = div(f.gp, f.rev); put('gm', gm != null && isFinite(gm) ? gm * 100 : null);
+  var dr = div(f.tl, f.ta); put('dr', dr != null && isFinite(dr) ? dr * 100 : null);
+  if(f.eq != null && f.eq <= 0){ R.de = {v:-Infinity, s:0, disp:'淨值為負'}; } else put('de', div(f.tl, f.eq));
+  if(ebitda != null && ebitda <= 0 && debt){ R.nde = {v:Infinity, s:0, disp:'EBITDA ≤ 0'}; } else put('nde', (debt != null && ebitda != null) ? div(debt, ebitda) : null, debt === 0 ? '無有息負債' : null);
+  if(debt === 0 && R.nde) R.nde.s = 100;
+  if(f.eq != null && f.eq <= 0){ R.roe = {v:null, s:0, disp:'淨值為負'}; } else { var roe = div(f.ni, f.eq); put('roe', roe != null && isFinite(roe) ? roe * 100 : null); }
+  var gr = (f.rev != null && f.revp) ? (f.rev - f.revp) / Math.abs(f.revp) * 100 : null; put('gr', gr);
+  var ard = div(f.ar, f.rev); put('ard', ard != null && isFinite(ard) ? ard * 365 : null);
+  var invd = div(f.inv, cogs); put('invd', invd != null && isFinite(invd) ? invd * 365 : null);
+  var fcf = (f.cfo != null && f.capex != null) ? f.cfo - Math.abs(f.capex) : null;
+  var fcfS = null; if(fcf != null){ if(fcf >= 0) fcfS = 90; else if(f.rev && Math.abs(fcf) <= Math.abs(f.rev) * 0.05) fcfS = 50; else fcfS = 20; }
+  R.fcf = {v:fcf, s:fcfS};
+  Object.keys(R).forEach(function(k){ R[k].lv = lvOf(R[k].s); });
+
+  function avgOf(keys, wts){ var t = 0, w = 0; keys.forEach(function(k, i){ var s = R[k] && R[k].s; if(s != null){ var ww = wts ? wts[i] : 1; t += s * ww; w += ww; } }); return w ? t / w : null; }
+  function qAvg(list, sel){ var t = 0, n = 0; list.forEach(function(q){ var o = q.o[sel[q.k]]; if(o){ t += o[1]; n++; } }); return n ? t / n : null; }
+  var C = {};
+  C.char = qAvg(D.CHARACTER, S.ch);
+  C.cap = avgOf(['dscr','dscr2','icr','cfocl','cr','qr','opm','gm'], [2,2,1.5,1,1,1,1,0.5]);
+  C.capi = avgOf(['dr','de','nde','roe'], [1.5,1,1,0.8]);
+  var ct = D.COLLATERAL.filter(function(c){ return c.k === S.loan.ctype; })[0] || D.COLLATERAL[0];
+  var cval = num(S.loan.cval);
+  var loanable = (cval != null) ? cval * ct.ltv : (ct.ltv === 0 ? 0 : null);
+  var cov = (loanable != null && L.amt) ? loanable / L.amt : null;
+  var gu = D.GUARANTOR.filter(function(g){ return g.k === S.loan.guar; })[0] || D.GUARANTOR[2];
+  C.coll = cov != null ? clamp(scoreOf(cov, [0, 0.5, 1.0, 1.3], 1) + gu.s, 0, 100) : (ct.ltv === 0 ? gu.s : null);
+  var cq = qAvg(D.CONDITIONS, S.co), cr = avgOf(['gr','ard','invd','fcf']);
+  C.cond = (cq != null && cr != null) ? cq * 0.55 + cr * 0.45 : (cq != null ? cq : cr);
+
+  var tw = 0, tt = 0;
+  D.FIVE_C.forEach(function(c){ var w = Math.max(0, +settings.weights[c.k] || 0); if(C[c.k] != null){ tt += C[c.k] * w; tw += w; } });
+  var raw = tw ? tt / tw : null, total = raw;
+  var flags = [], cap = 100;
+  var payOpt = D.CHARACTER[0].o[S.ch.pay];
+  if(payOpt && payOpt[2] === 'flag'){ flags.push('有退票或逾期未清償紀錄：品格有重大瑕疵，銀行原則上不予承作。'); cap = Math.min(cap, 45); }
+  if(f.eq != null && f.eq <= 0){ flags.push('淨值為負（資不抵債）：自有資本已被虧損侵蝕殆盡。'); cap = Math.min(cap, 45); }
+  if(R.dscr2.v != null && R.dscr2.v < 1){ flags.push('新增借款後 DSCR ' + fmtN(R.dscr2.v, 2) + ' 倍，低於 1：本業現金流量不足以支付借款本息。'); cap = Math.min(cap, 64); }
+  if(f.cfo != null && f.cfo < 0 && f.cash != null && f.pd != null && f.cash < f.pd){ flags.push('營業現金流為負，且帳上現金不足以支付一年內到期本金：短期有斷鏈風險。'); cap = Math.min(cap, 64); }
+  if(total != null) total = Math.min(total, cap);
+  var grade = total == null ? '—' : (total >= 80 ? 'A' : total >= 65 ? 'B' : total >= 50 ? 'C' : 'D');
+  var REC = {
+    A:['建議核貸', '還款能力與財務結構穩健，可依申請額度承作，並給予較優惠的利率條件。'],
+    B:['可核貸（附一般條件）', '整體尚屬穩健，但有部分指標需追蹤；附一般授信條件（定期提供財報、維持財務比率）後承作。'],
+    C:['附條件核貸或降額', '風險偏高：建議降低額度、縮短期間、追加擔保或送信保基金保證，並分期撥款、追蹤資金用途。'],
+    D:['暫不建議核貸', '目前財務體質不足以支撐新增借款；建議先改善現金流量與資本結構，或改以政府信保專案、增資等方式籌資。'],
+    '—':['資料不足', '請先輸入財報數字。']};
+  var maxPay = (ebitda != null) ? ebitda / 1.25 - (service || 0) : null;
+  var afford = (maxPay != null && fac) ? Math.max(0, maxPay * fac) : null;
+  var sugg = null;
+  if(L.amt != null){
+    if(grade === 'D') sugg = 0;
+    else if(afford != null){ sugg = Math.min(L.amt, afford); if(grade === 'C'){ var capC = (loanable != null && loanable > 0) ? Math.max(loanable, L.amt * 0.5) : L.amt * 0.6; sugg = Math.min(sugg, capC); } }
+  }
+  var out = {f:f, L:L, R:R, C:C, raw:raw, total:total, grade:grade, rec:REC[grade], flags:flags, ebitda:ebitda, debt:debt, newPay:newPay, service:service,
+    afford:afford, sugg:sugg, loanable:loanable, cov:cov, ct:ct, gu:gu};
+  out.avoid = detectAvoid(out);
+  out.cov2 = covenants(out);
+  return out;
+}
+
+function detectAvoid(o){
+  var f = o.f, R = o.R;
+  function opt(list, sel, k){ var q = list.filter(function(x){ return x.k === k; })[0]; return q ? sel[k] : null; }
+  var rules = {
+    expand:function(){ var a = R.gr.v != null && R.gr.v > 40, b = f.capex != null && f.cfo != null && Math.abs(f.capex) > Math.max(f.cfo, 0) * 1.5 && Math.abs(f.capex) > 0; return a || b ? (a ? '營收成長 ' + fmtN(R.gr.v, 1) + '%' : '') + (a && b ? '、' : '') + (b ? '資本支出 ' + fmtN(Math.abs(f.capex)) + ' 超過營業現金流 1.5 倍' : '') : null; },
+    cash:function(){ var a = f.cfo != null && f.cfo < 0, b = R.qr.v != null && R.qr.v < 0.7; return a || b ? (a ? '營業現金流為負' : '') + (a && b ? '、' : '') + (b ? '速動比率 ' + fmtN(R.qr.v, 2) + ' 倍' : '') : null; },
+    debt:function(){ if(f.eq != null && f.eq <= 0) return '淨值為負'; return R.dr.v != null && R.dr.v > 70 ? '負債比率 ' + fmtN(R.dr.v, 1) + '%' : null; },
+    mix:function(){ var a = opt(D.CHARACTER, S.ch, 'sep') === 2, b = opt(D.CHARACTER, S.ch, 'fs') === 2; return a || b ? (a ? '公私不分／資金貸與關係人' : '') + (a && b ? '、' : '') + (b ? '財報未經會計師查核' : '') : null; },
+    conc:function(){ return S.co.conc === 2 ? '前五大客戶超過 60% 或依賴單一通路' : null; },
+    margin:function(){ var a = R.gm.v != null && R.gm.v < 10, b = f.op != null && f.op < 0; return a || b ? (a ? '毛利率 ' + fmtN(R.gm.v, 1) + '%' : '') + (a && b ? '、' : '') + (b ? '營業虧損' : '') : null; },
+    stock:function(){ return R.invd.v != null && R.invd.v > 180 ? '存貨週轉 ' + fmtN(R.invd.v) + ' 天' : null; },
+    credit:function(){ return R.ard.v != null && R.ard.v > 90 ? '應收帳款週轉 ' + fmtN(R.ard.v) + ' 天' : null; },
+    law:function(){ return S.ch.law >= 1 ? D.CHARACTER[3].o[S.ch.law][0] : null; },
+    risk:function(){ var a = S.co.raw === 2, b = S.co.climate === 2; return a || b ? (a ? '原物料價格波動大且未避險' : '') + (a && b ? '、' : '') + (b ? '氣候／疫病影響高' : '') : null; }
+  };
+  return D.AVOID.map(function(a, i){
+    var auto = rules[a.auto] ? rules[a.auto]() : null;
+    var ov = S.av[i];
+    var hit = ov === 'y' ? true : ov === 'n' ? false : !!auto;
+    var st = settings.avoid[i] || a;
+    return {i:i, t:st.t || a.t, c:st.c || a.c, d:a.d, auto:auto, ov:ov || '', hit:hit};
+  });
+}
+
+function covenants(o){
+  var R = o.R, f = o.f, list = [];
+  if(R.dscr2.v != null && R.dscr2.v < 1.25) list.push('財務承諾條款：每半年提供財報，償債保障比率（DSCR）須維持 1.2 倍以上，未達時應提出改善計畫或提前還款。');
+  if(R.dr.v != null && R.dr.v > 60) list.push('負債比率不得高於 ' + Math.max(60, Math.ceil(R.dr.v / 5) * 5) + '%；未經本行同意不得再向他行增加借款或為他人背書保證。');
+  if(o.C.coll != null && o.C.coll < 60) list.push('擔保不足：追加擔保品，或移送信保基金（農業信用保證基金）保證以分散風險。');
+  if(R.invd.v != null && R.invd.v > 150) list.push('存貨週轉偏慢：週轉金改以倉單質押或存貨融資方式辦理，按出貨進度還款。');
+  if(R.ard.v != null && R.ard.v > 75) list.push('應收帳款天數偏長：主要客戶貨款指定匯入本行帳戶，或改辦應收帳款融資。');
+  if(S.co.raw === 2 || S.co.climate === 2) list.push('投保農業保險（或產物保險）並以本行為受益人；主要原物料以長約或期貨避險。');
+  if(S.co.conc === 2) list.push('提供主要客戶合約副本，並定期揭露前五大客戶銷售比重。');
+  if(S.co.use === 2) list.push('限定資金用途：償還他行借款需提出清償證明，其他用途憑發票分次撥款。');
+  if(S.ch.fs >= 1) list.push('每年提供經會計師查核簽證之財務報表。');
+  if(S.ch.sep >= 1) list.push('不得有資金貸與股東或關係人；關係人交易須依一般商業條件辦理並揭露。');
+  if((R.gr.v != null && R.gr.v > 40) || (f.capex && f.cfo != null && Math.abs(f.capex) > Math.max(f.cfo, 0) * 1.5)) list.push('擴建型資金依工程或設備交貨進度分期撥款，並實地查核。');
+  if(o.grade === 'A' && !list.length) list.push('一般授信條件：撥貸後每年提供財報，維持往來存款。');
+  list.push('撥貸後 3 個月內追蹤資金用途，並每年辦理覆審。');
+  return list;
+}
+
+/* ================= 文字 ================= */
+function rDisp(k, r){
+  var def = D.RATIOS.filter(function(x){ return x.k === k; })[0];
+  if(!r || (r.v == null && !r.disp)) return '—';
+  if(r.disp) return r.disp;
+  if(r.v === Infinity) return '∞';
+  if(def.u === '%') return fmtN(r.v, 1) + '%';
+  if(def.u === 'x') return fmtN(r.v, 2) + ' 倍';
+  if(def.u === '天') return fmtN(r.v) + ' 天';
+  return fmtN(r.v);
+}
+function cReasons(o, ck){
+  var R = o.R, out = [];
+  if(ck === 'char'){ D.CHARACTER.forEach(function(q){ var op = q.o[S.ch[q.k]]; if(op) out.push({t:q.n + '：' + op[0], lv:lvOf(op[1])}); }); }
+  else if(ck === 'coll'){
+    out.push({t:'擔保品：' + o.ct.n + (o.ct.ltv ? '（貸放成數約 ' + Math.round(o.ct.ltv * 100) + '%）' : ''), lv:o.ct.ltv ? 'good' : 'watch'});
+    if(o.cov != null) out.push({t:'可貸放值 ÷ 申請金額 ＝ ' + fmtN(o.cov * 100) + '%', lv:o.cov >= 1 ? 'good' : o.cov >= 0.5 ? 'watch' : 'bad'});
+    out.push({t:'保證人：' + o.gu.n, lv:o.gu.s >= 10 ? 'good' : o.gu.s ? 'watch' : 'bad'});
+  } else {
+    D.RATIOS.filter(function(r){ return r.c === ck; }).forEach(function(r){ var x = R[r.k]; if(x && x.lv !== 'na') out.push({t:r.n + ' ' + rDisp(r.k, x), lv:x.lv}); });
+    if(ck === 'cond'){ D.CONDITIONS.forEach(function(q){ var op = q.o[S.co[q.k]]; if(op) out.push({t:q.n + '：' + op[0], lv:lvOf(op[1])}); }); }
+  }
+  return out;
+}
+function cName(k){ var c = D.FIVE_C.filter(function(x){ return x.k === k; })[0]; return c ? c.n : k; }
+function scoreColor(s){ return s == null ? 'var(--sub)' : s >= 75 ? 'var(--good)' : s >= 50 ? 'var(--warn)' : 'var(--bad)'; }
+
+/* ================= 畫面 ================= */
+var O = null, curTab = 0;
+function buildForm(){
+  $('samples').innerHTML = D.SAMPLES.map(function(s){ return '<button type="button" data-sample="' + s.key + '">' + esc(s.label) + '</button>'; }).join('');
+  $('finFields').innerHTML = D.FIELDS.map(function(g){
+    return '<h3 class="grp">' + esc(g.grp) + '</h3><div class="fgrid">' + g.items.map(function(it){
+      return '<div class="fld"><label for="f_' + it.k + '">' + esc(it.n) + '</label><input class="num" type="text" inputmode="decimal" id="f_' + it.k + '" data-f="' + it.k + '" autocomplete="off">' + (it.h ? '<span class="h">' + esc(it.h) + '</span>' : '') + '</div>';
+    }).join('') + '</div>';
+  }).join('');
+  $('l_ctype').innerHTML = D.COLLATERAL.map(function(c){ return '<option value="' + c.k + '">' + esc(c.n) + '</option>'; }).join('');
+  $('l_guar').innerHTML = D.GUARANTOR.map(function(g){ return '<option value="' + g.k + '">' + esc(g.n) + '</option>'; }).join('');
+  function q(list, grp){ return list.map(function(qq){
+    return '<div class="q"><div class="qt">' + esc(qq.n) + '</div><div class="qh">' + esc(qq.h) + '</div>' + qq.o.map(function(op, i){
+      return '<label class="opt"><input type="radio" name="' + grp + '_' + qq.k + '" value="' + i + '" data-q="' + grp + '" data-k="' + qq.k + '"><span>' + esc(op[0]) + '</span><span class="sc">' + op[1] + ' 分</span></label>';
+    }).join('') + '</div>'; }).join(''); }
+  $('qChar').innerHTML = q(D.CHARACTER, 'ch');
+  $('qCond').innerHTML = q(D.CONDITIONS, 'co');
+}
+function fillForm(){
+  ['name','industry','year','type'].forEach(function(k){ var el = document.querySelector('[data-b="' + k + '"]'); if(el) el.value = S[k] || ''; });
+  if(!$('i_type').value) $('i_type').value = '上市';
+  Object.keys(S.f).forEach(function(k){ var el = $('f_' + k); if(el){ var v = S.f[k]; var n = num(v); el.value = (n != null && typeof v === 'number') ? fmtN(n, n % 1 ? 2 : 0) : (v == null ? '' : v); } });
+  Object.keys(S.loan).forEach(function(k){ var el = document.querySelector('[data-l="' + k + '"]'); if(!el) return; var v = S.loan[k];
+    if(el.classList.contains('num')){ var n = num(v); el.value = (n != null && typeof v === 'number') ? fmtN(n, n % 1 ? 2 : 0) : (v == null ? '' : v); } else el.value = v; });
+  document.querySelectorAll('input[data-q]').forEach(function(r){ var sel = r.getAttribute('data-q') === 'ch' ? S.ch : S.co; r.checked = +r.value === sel[r.getAttribute('data-k')]; });
+  ltvHint();
+}
+function ltvHint(){ var ct = D.COLLATERAL.filter(function(c){ return c.k === S.loan.ctype; })[0]; $('ltvHint').textContent = ct ? (ct.ltv ? '本工具以估值 × ' + Math.round(ct.ltv * 100) + '% 計算可貸放值' : '無擔保品，擔保面只看保證人') : ''; }
+
+function radarSvg(C){
+  var cx = 200, cy = 190, R0 = 130, n = D.FIVE_C.length;
+  function pt(i, r){ var a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; }
+  var g = '';
+  [20,40,60,80,100].forEach(function(v){ var p = D.FIVE_C.map(function(c, i){ return pt(i, R0 * v / 100).map(function(x){ return x.toFixed(1); }).join(','); }).join(' ');
+    g += '<polygon points="' + p + '" fill="none" stroke="var(--line)" stroke-width="1"' + (v === 60 ? '' : '') + '/>'; });
+  var th = D.FIVE_C.map(function(c, i){ return pt(i, R0 * 0.65).map(function(x){ return x.toFixed(1); }).join(','); }).join(' ');
+  g += '<polygon points="' + th + '" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+  D.FIVE_C.forEach(function(c, i){ var p = pt(i, R0); g += '<line x1="' + cx + '" y1="' + cy + '" x2="' + p[0].toFixed(1) + '" y2="' + p[1].toFixed(1) + '" stroke="var(--line)"/>'; });
+  var pp = D.FIVE_C.map(function(c, i){ return pt(i, R0 * clamp(C[c.k] || 0, 0, 100) / 100).map(function(x){ return x.toFixed(1); }).join(','); }).join(' ');
+  g += '<polygon points="' + pp + '" fill="color-mix(in srgb, var(--brand2) 28%, transparent)" stroke="var(--brand2)" stroke-width="2.5" stroke-linejoin="round"/>';
+  D.FIVE_C.forEach(function(c, i){ var p = pt(i, R0 * clamp(C[c.k] || 0, 0, 100) / 100); g += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4.5" fill="' + scoreColor(C[c.k]) + '" stroke="var(--panel)" stroke-width="1.5"/>';
+    var l = pt(i, R0 + 30); var anchor = Math.abs(l[0] - cx) < 10 ? 'middle' : (l[0] > cx ? 'start' : 'end');
+    g += '<text x="' + l[0].toFixed(1) + '" y="' + (l[1] - 4).toFixed(1) + '" text-anchor="' + anchor + '" font-size="15" font-weight="700" fill="var(--ink)">' + c.n + '</text>';
+    g += '<text x="' + l[0].toFixed(1) + '" y="' + (l[1] + 13).toFixed(1) + '" text-anchor="' + anchor + '" font-size="12" fill="' + scoreColor(C[c.k]) + '">' + (C[c.k] == null ? '—' : Math.round(C[c.k]) + ' 分') + '</text>'; });
+  return '<svg viewBox="0 0 400 380" role="img" aria-label="信用 5C 雷達圖">' + g + '<text x="200" y="372" text-anchor="middle" font-size="11" fill="var(--sub)">虛線＝65 分（B 級）參考線</text></svg>';
+}
+
+function renderDash(){
+  var o = O, gcls = 'g-' + (o.grade === '—' ? 'D' : o.grade);
+  var unit = '';
+  var v = '<div class="panel verdict"><div class="key-note">' + esc(S.name || '（未命名公司）') + '</div>' +
+    '<div class="big" style="color:' + scoreColor(o.total) + '">' + (o.total == null ? '—' : Math.round(o.total)) + '<span style="font-size:1rem;color:var(--sub)"> / 100</span></div>' +
+    '<div><span class="gradeL ' + gcls + '">' + o.grade + '</span></div>' +
+    '<div class="rec">' + esc(o.rec[0]) + '</div><div class="recd">' + esc(o.rec[1]) + '</div>' +
+    '<div class="kv">' +
+    '<span>申請金額</span><span>' + fmtN(o.L.amt) + unit + '</span>' +
+    '<span>新借款每年本息</span><span>' + fmtN(o.newPay) + '</span>' +
+    '<span>EBITDA</span><span>' + fmtN(o.ebitda) + '</span>' +
+    '<span>DSCR 1.25 倍下可承作上限</span><span>' + fmtN(o.afford) + '</span>' +
+    '<span>擔保品可貸放值</span><span>' + fmtN(o.loanable) + '</span>' +
+    '<span>建議核貸額度</span><span style="color:' + scoreColor(o.total) + '">' + fmtN(o.sugg) + '</span>' +
+    '</div>' +
+    (o.raw != null && o.total != null && o.total < o.raw - 0.5 ? '<div class="key-note" style="margin-top:8px;text-align:left">原始加權分數 ' + Math.round(o.raw) + ' 分，因紅色警示被壓到 ' + Math.round(o.total) + ' 分。</div>' : '') +
+    (o.flags.length ? '<div class="flags">' + o.flags.map(function(x){ return '<div class="flag">🚩 ' + esc(x) + '</div>'; }).join('') + '</div>' : '') +
+    '</div>';
+  var r = '<div class="panel"><div class="radarbox">' + radarSvg(o.C) + '</div><div class="cgrid">' + D.FIVE_C.map(function(c){
+    var s = o.C[c.k], rs = cReasons(o, c.k);
+    return '<div class="ccard"><div class="ch"><b>' + c.n + '</b><em>' + c.en + '・權重 ' + (+settings.weights[c.k] || 0) + '</em><span class="s" style="color:' + scoreColor(s) + '">' + (s == null ? '—' : Math.round(s)) + '</span></div>' +
+      '<div class="bar"><i style="width:' + clamp(s || 0, 0, 100) + '%;background:' + scoreColor(s) + '"></i></div><div class="cq">' + esc(c.q) + '</div>' +
+      '<ul>' + rs.slice(0, 7).map(function(x){ return '<li class="lv-' + x.lv + '">' + esc(x.t) + '</li>'; }).join('') + '</ul></div>';
+  }).join('') + '</div></div>';
+  $('dash').innerHTML = '<div class="dash">' + v + r + '</div>';
+  var cmap = {cap:'能力', capi:'資本', cond:'條件'};
+  $('ratioTable').innerHTML = '<thead><tr><th>指標</th><th>5C</th><th style="text-align:right">數值</th><th>判讀</th><th>公式</th><th>銀行為什麼看它</th></tr></thead><tbody>' + D.RATIOS.map(function(d){
+    var x = o.R[d.k] || {lv:'na'};
+    var col = x.lv === 'na' ? 'var(--sub)' : 'var(--' + (x.lv === 'watch' ? 'warn' : x.lv) + ')';
+    var uu = d.u === '%' ? '%' : d.u === '天' ? ' 天' : ''; var th = d.pts ? (d.dir > 0 ? '良好 ≥ ' : '良好 ≤ ') + d.pts[2] + uu + '｜警戒 ' + (d.dir > 0 ? '< ' : '> ') + d.pts[1] + uu : '≥ 0 為佳';
+    return '<tr><td><b>' + esc(d.n) + '</b></td><td><span class="pill">' + cmap[d.c] + '</span></td><td class="v">' + rDisp(d.k, x) + '</td><td style="white-space:nowrap"><span class="dot" style="background:' + col + '"></span>' + LV_TXT[x.lv] + '<div class="key-note">' + esc(th) + '</div></td><td class="f">' + esc(d.f) + '</td><td class="w">' + esc(d.why) + '</td></tr>';
+  }).join('') + '</tbody>';
+}
+
+function renderAvoid(){
+  var o = O, hits = o.avoid.filter(function(a){ return a.hit; });
+  var byC = {}; hits.forEach(function(a){ byC[a.c] = (byC[a.c] || 0) + 1; });
+  $('avSum').innerHTML = '<span class="big" style="color:' + (hits.length >= 4 ? 'var(--bad)' : hits.length >= 2 ? 'var(--warn)' : 'var(--good)') + '">' + hits.length + ' / 10</span><span>項踩雷</span>' +
+    D.FIVE_C.map(function(c){ return byC[c.k] ? '<span class="pill">' + c.n + ' ×' + byC[c.k] + '</span>' : ''; }).join('') +
+    '<span class="key-note" style="flex-basis:100%">' + (hits.length === 0 ? '沒有明顯踩雷，經營體質符合銀行期待。' : hits.length <= 2 ? '有少數地雷，審查時會被要求說明並列入追蹤。' : hits.length <= 4 ? '地雷偏多，銀行通常會降額或要求補強擔保。' : '地雷過多，屬高風險借款人，需先改善體質。') + '</span>';
+  $('avoidList').innerHTML = o.avoid.map(function(a){
+    return '<div class="av' + (a.hit ? ' hit' : '') + '"><div class="no">' + (a.i + 1) + '</div><div><div class="t">' + esc(a.t) + ' <span class="pill">' + cName(a.c) + '</span></div>' +
+      '<div class="d">自動偵測規則：' + esc(a.d) + '</div>' +
+      '<div class="auto ' + (a.auto ? 'lv-bad' : 'lv-good') + '">' + (a.auto ? '⚠ 偵測到：' + esc(a.auto) : '✓ 未偵測到') + (a.ov ? '（已手動改判）' : '') + '</div></div>' +
+      '<select data-av="' + a.i + '" aria-label="改判第 ' + (a.i + 1) + ' 項"><option value=""' + (a.ov === '' ? ' selected' : '') + '>依自動偵測</option><option value="y"' + (a.ov === 'y' ? ' selected' : '') + '>判定：有此情形</option><option value="n"' + (a.ov === 'n' ? ' selected' : '') + '>判定：沒有</option></select></div>';
+  }).join('');
+}
+
+function reportHtml(){
+  var o = O, R = o.R, now = new Date();
+  var dt = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+  var sig = [settings.org, settings.author].filter(Boolean).join('｜');
+  var strong = [], weak = [];
+  D.RATIOS.forEach(function(d){ var x = R[d.k]; if(!x || x.lv === 'na') return; if(x.lv === 'good') strong.push(d.n + ' ' + rDisp(d.k, x)); else if(x.lv === 'bad') weak.push(d.n + ' ' + rDisp(d.k, x)); });
+  var h = '<div class="rh"><h2>授信審查意見書（教學練習）</h2><div>' + esc(S.name || '（未命名公司）') + '｜財報年度 ' + esc(S.year || '—') + '｜製表日 ' + dt + (sig ? '｜' + esc(sig) : '') + '</div></div>';
+  h += '<h3>一、借款人概況</h3><table><tr><th>公司名稱</th><td>' + esc(S.name || '—') + '</td><th>公司類型</th><td>' + esc(S.type || '—') + '</td></tr><tr><th>主要業務</th><td colspan="3">' + esc(S.industry || '—') + '</td></tr>' +
+    '<tr><th>營業收入</th><td>' + fmtN(o.f.rev) + '</td><th>本期淨利</th><td>' + fmtN(o.f.ni) + '</td></tr><tr><th>資產總計</th><td>' + fmtN(o.f.ta) + '</td><th>權益總計</th><td>' + fmtN(o.f.eq) + '</td></tr></table>';
+  h += '<h3>二、借款需求</h3><table><tr><th>申請金額</th><td>' + fmtN(o.L.amt) + '</td><th>期間／利率</th><td>' + fmtN(o.L.yrs, 0) + ' 年／' + fmtN(o.L.rate, 2) + '%</td></tr><tr><th>用途</th><td colspan="3">' + esc(S.loan.purpose || '—') + '</td></tr>' +
+    '<tr><th>擔保品</th><td>' + esc(o.ct.n) + '（估值 ' + fmtN(num(S.loan.cval)) + '，可貸放值 ' + fmtN(o.loanable) + '）</td><th>保證人</th><td>' + esc(o.gu.n) + '</td></tr>' +
+    '<tr><th>還款來源</th><td colspan="3">本業營業現金流量（EBITDA ' + fmtN(o.ebitda) + '）；新借款每年本息約 ' + fmtN(o.newPay) + '，既有借款每年本息約 ' + fmtN(o.service) + '。</td></tr></table>';
+  h += '<h3>三、信用 5C 分析</h3><table><tr><th>面向</th><th>分數</th><th>重點說明</th></tr>' + D.FIVE_C.map(function(c){
+    var rs = cReasons(o, c.k); return '<tr><th>' + c.n + '（' + c.en + '）</th><td style="white-space:nowrap">' + (o.C[c.k] == null ? '—' : Math.round(o.C[c.k])) + '</td><td>' + esc(rs.map(function(x){ return x.t; }).join('；')) + '</td></tr>'; }).join('') + '</table>';
+  h += '<h3>四、財務比率摘要</h3><table><tr><th>指標</th><th>數值</th><th>判讀</th><th>指標</th><th>數值</th><th>判讀</th></tr>';
+  for(var i = 0; i < D.RATIOS.length; i += 2){ h += '<tr>' + [D.RATIOS[i], D.RATIOS[i+1]].map(function(d){ if(!d) return '<td></td><td></td><td></td>'; var x = R[d.k] || {lv:'na'}; return '<td>' + esc(d.n) + '</td><td style="text-align:right;white-space:nowrap">' + rDisp(d.k, x) + '</td><td>' + LV_TXT[x.lv] + '</td>'; }).join('') + '</tr>'; }
+  h += '</table><p><b>優勢：</b>' + esc(strong.slice(0, 6).join('、') || '無明顯優勢指標') + '。<br><b>風險：</b>' + esc(weak.slice(0, 6).join('、') || '無明顯風險指標') + '。</p>';
+  var hits = o.avoid.filter(function(a){ return a.hit; });
+  h += '<h3>五、創業十大避免檢核（' + hits.length + ' / 10 項）</h3>' + (hits.length ? '<ol>' + hits.map(function(a){ return '<li><b>' + esc(a.t) + '</b>（' + cName(a.c) + '）' + (a.auto ? '：' + esc(a.auto) : '：分析人判定有此情形') + '</li>'; }).join('') + '</ol>' : '<p>未發現明顯踩雷項目。</p>');
+  h += '<h3>六、綜合評估與建議</h3><table><tr><th>信用分數</th><td>' + (o.total == null ? '—' : Math.round(o.total) + ' / 100') + '</td><th>評等</th><td>' + o.grade + ' 級</td></tr><tr><th>審查建議</th><td colspan="3"><b>' + esc(o.rec[0]) + '</b>：' + esc(o.rec[1]) + '</td></tr>' +
+    '<tr><th>建議核貸額度</th><td colspan="3">' + fmtN(o.sugg) + (o.L.amt != null && o.sugg != null && o.sugg < o.L.amt ? '（申請 ' + fmtN(o.L.amt) + '，依償債能力／擔保狀況調降）' : '') + '</td></tr></table>';
+  if(o.flags.length) h += '<p><b>🚩 紅色警示：</b></p><ul>' + o.flags.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+  h += '<p><b>建議授信條件：</b></p><ol>' + o.cov2.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>';
+  h += '<p class="key-note" style="margin-top:14px">註：本意見書由「信用 5C 財務風險診斷」教學工具依輸入資料自動整理，評分門檻與權重為簡化示意，不代表任何金融機構的實際授信決定。</p>';
+  return h;
+}
+function reportText(){ var d = document.createElement('div'); d.innerHTML = reportHtml();
+  d.querySelectorAll('tr').forEach(function(tr){ var cells = Array.prototype.map.call(tr.children, function(c){ return c.textContent.trim(); }); tr.textContent = cells.join('｜') + '\n'; });
+  d.querySelectorAll('h2,h3,p,li,div.rh div').forEach(function(e){ e.insertAdjacentText('afterend', '\n'); });
+  return d.textContent.replace(/\n{3,}/g, '\n\n').trim(); }
+function reportMd(){
+  var o = O, R = o.R, md = '# 授信審查意見書（教學練習）：' + (S.name || '未命名公司') + '\n\n';
+  md += '- 財報年度：' + (S.year || '—') + '｜公司類型：' + (S.type || '—') + '｜主要業務：' + (S.industry || '—') + '\n';
+  md += '- 申請：' + fmtN(o.L.amt) + '，' + fmtN(o.L.yrs) + ' 年，' + fmtN(o.L.rate, 2) + '%；用途：' + (S.loan.purpose || '—') + '\n';
+  md += '- 擔保：' + o.ct.n + '（可貸放值 ' + fmtN(o.loanable) + '）；保證人：' + o.gu.n + '\n\n';
+  md += '## 結論\n\n**' + (o.total == null ? '—' : Math.round(o.total)) + ' 分／' + o.grade + ' 級：' + o.rec[0] + '**。' + o.rec[1] + '\n\n建議核貸額度：' + fmtN(o.sugg) + '\n\n';
+  if(o.flags.length) md += o.flags.map(function(x){ return '- 🚩 ' + x; }).join('\n') + '\n\n';
+  md += '## 信用 5C\n\n| 面向 | 分數 | 重點 |\n|---|---:|---|\n' + D.FIVE_C.map(function(c){ return '| ' + c.n + ' ' + c.en + ' | ' + (o.C[c.k] == null ? '—' : Math.round(o.C[c.k])) + ' | ' + cReasons(o, c.k).map(function(x){ return x.t; }).join('；') + ' |'; }).join('\n') + '\n\n';
+  md += '## 財務比率\n\n| 指標 | 數值 | 判讀 | 公式 |\n|---|---:|---|---|\n' + D.RATIOS.map(function(d){ var x = R[d.k] || {lv:'na'}; return '| ' + d.n + ' | ' + rDisp(d.k, x) + ' | ' + LV_TXT[x.lv] + ' | ' + d.f + ' |'; }).join('\n') + '\n\n';
+  md += '## 創業十大避免檢核\n\n' + o.avoid.map(function(a){ return '- [' + (a.hit ? 'x' : ' ') + '] ' + (a.i + 1) + '. ' + a.t + '（' + cName(a.c) + '）' + (a.hit && a.auto ? '：' + a.auto : ''); }).join('\n') + '\n\n';
+  md += '## 建議授信條件\n\n' + o.cov2.map(function(x, i){ return (i + 1) + '. ' + x; }).join('\n') + '\n\n> 本文件由教學工具自動整理，評分門檻為簡化示意，不構成實際授信決定。\n';
+  return md;
+}
+function aiPrompt(){
+  return '你是一位台灣商業銀行的資深授信審查人員，熟悉中小企業與農業、食品產業的放款實務。\n請根據以下我用「信用 5C 財務風險診斷」整理的資料，以銀行放款的角度評估這家公司「值不值得借錢給它」：\n\n' + reportMd() +
+    '\n請你：\n1. 逐一檢視 5C（品格、能力、資本、擔保品、條件），指出我的判斷有沒有過於樂觀或悲觀之處，並說明理由。\n2. 補充這個次產業（' + (S.industry || '農業／食品業') + '）特有的授信風險，例如季節性、原物料、氣候與疫病、食安法規、政策補貼。\n3. 從「創業十大避免」的角度，提出經營者最該優先改善的 3 件事。\n4. 給出你的最終建議（核貸／附條件核貸／降額／婉拒）、建議額度與 3～5 條授信條件。\n5. 列出還需要向公司索取或查證的資料清單。\n請用繁體中文（台灣用語），條列清楚；數字只能引用上面提供的資料，推論請標示「推測」。';
+}
+function videoScript(){
+  var o = O, hits = o.avoid.filter(function(a){ return a.hit; });
+  var weakC = D.FIVE_C.filter(function(c){ return o.C[c.k] != null; }).sort(function(a, b){ return o.C[a.k] - o.C[b.k]; });
+  var lines = [
+    '【課程／影片講稿大綱】銀行會借錢給「' + (S.name || '這家公司') + '」嗎？用信用 5C 看懂一家企業的財務風險',
+    '',
+    '0. 開場（30 秒）：如果你是銀行放款人員，一家' + (S.industry || '農業／食品') + '公司來借 ' + fmtN(o.L.amt) + '，要「' + (S.loan.purpose || '擴充營運') + '」，你會借嗎？',
+    '1. 什麼是信用 5C（1 分鐘）：品格（願不願意還）、能力（有沒有能力還）、資本（自己出多少錢）、擔保品（還不出來怎麼辦）、條件（外部環境與用途）。',
+    '2. 先看能力——償債比率（2 分鐘）：EBITDA ' + fmtN(o.ebitda) + '，DSCR ' + rDisp('dscr', o.R.dscr) + '，借了之後變成 ' + rDisp('dscr2', o.R.dscr2) + '。用一句話解釋：一年賺到的現金夠不夠付這一年的本息。',
+    '3. 再看資本（1.5 分鐘）：負債比率 ' + rDisp('dr', o.R.dr) + '、有息負債／EBITDA ' + rDisp('nde', o.R.nde) + '，說明「自己出的錢越少，銀行越緊張」。',
+    '4. 擔保品與條件（1.5 分鐘）：' + o.ct.n + '；產業面的' + D.CONDITIONS.filter(function(q){ return S.co[q.k] === 2; }).map(function(q){ return q.n; }).join('、') + (D.CONDITIONS.some(function(q){ return S.co[q.k] === 2; }) ? '是主要風險。' : '大致平穩。'),
+    '5. 品格：財報透明度、繳款紀錄、食安法規紀錄為什麼比數字更重要（1 分鐘）。',
+    '6. 創業十大避免對照（2 分鐘）：這家公司踩到 ' + hits.length + ' 項' + (hits.length ? '——' + hits.map(function(a){ return a.t; }).join('、') : '') + '。對應你自己的事業，有沒有同樣的問題？',
+    '7. 結論（1 分鐘）：' + (o.total == null ? '—' : Math.round(o.total)) + ' 分、' + o.grade + ' 級，「' + o.rec[0] + '」；最弱的一環是「' + (weakC[0] ? weakC[0].n : '—') + '」。給經營者的一句建議。',
+    '8. 行動呼籲：到公開資訊觀測站挑一家你熟悉的上市食品公司，用同樣的方法練習一次。',
+    '',
+    '（提醒：影片中提到真實公司時，請註明資料來源與期間，避免做出未經查證的負面評論。）'
+  ];
+  return lines.join('\n');
+}
+
+function renderChip(){
+  var o = O; if(!o) return;
+  $('scoreChip').innerHTML = '<span class="grade g-' + (o.grade === '—' ? 'D' : o.grade) + '">' + o.grade + '</span><span><b>' + esc(S.name || '未命名公司') + '</b>　信用分數 <b>' + (o.total == null ? '—' : Math.round(o.total)) + '</b>・' + esc(o.rec[0]) + '・十大避免 <b>' + o.avoid.filter(function(a){ return a.hit; }).length + '</b> 項' + (o.flags.length ? '・<span class="lv-bad">🚩 ' + o.flags.length + ' 項警示</span>' : '') + '</span>';
+}
+function recalc(){ O = compute(); renderChip(); if(curTab === 2) renderDash(); if(curTab === 3) renderAvoid(); if(curTab === 4) $('report').innerHTML = reportHtml(); saveDraft(); }
+function showTab(i){ curTab = clamp(i, 0, 4); lsSet(TAB_KEY, String(curTab));
+  document.querySelectorAll('#tabs button').forEach(function(b){ var on = +b.getAttribute('data-tab') === curTab; b.classList.toggle('on', on); if(on){ var n = $('tabs'); n.scrollLeft = b.offsetLeft - (n.clientWidth - b.offsetWidth) / 2; } });
+  document.querySelectorAll('section.tab').forEach(function(s, j){ s.classList.toggle('on', j === curTab); });
+  recalc();
+  var y = $('tabs').getBoundingClientRect().top + window.scrollY - (document.body.classList.contains('has-marquee') ? 30 : 0);
+  if(window.scrollY > y) window.scrollTo({top:y, behavior:'smooth'});
+}
+
+/* ================= 設定 ================= */
+function saveFold(){ var open = []; document.querySelectorAll('.set-sec').forEach(function(d){ if(d.open) open.push(d.getAttribute('data-sec')); }); lsSet(FOLD_KEY, JSON.stringify(open)); }
+function restoreFold(){ var open = []; try{ open = JSON.parse(lsGet(FOLD_KEY) || '[]') || []; }catch(e){} document.querySelectorAll('.set-sec').forEach(function(d){ d.open = open.indexOf(d.getAttribute('data-sec')) >= 0; }); }
+function toggleSettings(show){ var p = $('settings'); if(show == null) show = p.hidden; p.hidden = !show; $('settingsBtn').setAttribute('aria-expanded', String(show)); if(show) p.scrollIntoView({behavior:'smooth', block:'start'}); }
+function applySettings(){
+  var h = document.documentElement; h.classList.remove('fs-l', 'fs-xl'); if(settings.fs) h.classList.add('fs-' + settings.fs);
+  if(settings.theme) h.setAttribute('data-theme', settings.theme); else h.removeAttribute('data-theme');
+  document.querySelectorAll('#fsSeg button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-fs') === (settings.fs || '')); });
+  document.querySelectorAll('#themeSeg button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-theme-set') === (settings.theme || '')); });
+  $('setMarquee').checked = !!settings.marquee; $('setAutoSave').checked = !!settings.autoSave;
+  $('setAuthor').value = settings.author || ''; $('setOrg').value = settings.org || '';
+  $('sumDisplay').textContent = '字級 ' + ({'':'標準', l:'大', xl:'特大'}[settings.fs || ''] || '標準') + '｜' + ({'':'跟隨系統', light:'淺色', dark:'深色'}[settings.theme || '']) + '｜跑馬燈 ' + (settings.marquee ? '開' : '關') + '｜自動保存 ' + (settings.autoSave ? '開' : '關');
+  $('sumWeights').textContent = D.FIVE_C.map(function(c){ return c.n + ' ' + (+settings.weights[c.k] || 0); }).join('・');
+  var changed = settings.avoid.some(function(a, i){ return a.t !== D.AVOID[i].t || a.c !== D.AVOID[i].c; });
+  $('sumAvoid').textContent = changed ? '已自訂' : '預設版本';
+  $('sumReport').textContent = [settings.org, settings.author].filter(Boolean).join('｜') || '未設定';
+  $('weightGrid').innerHTML = D.FIVE_C.map(function(c){ return '<div><label for="w_' + c.k + '">' + c.n + '（' + c.en + '）</label><input type="number" min="0" max="100" step="1" id="w_' + c.k + '" data-w="' + c.k + '" value="' + (+settings.weights[c.k] || 0) + '"></div>'; }).join('');
+  $('avoidEdit').innerHTML = settings.avoid.map(function(a, i){ return '<div class="r"><b>' + (i + 1) + '</b><input type="text" data-avt="' + i + '" value="' + esc(a.t) + '" aria-label="第 ' + (i + 1) + ' 項文字"><select data-avc="' + i + '" aria-label="對應 5C">' + D.FIVE_C.map(function(c){ return '<option value="' + c.k + '"' + (c.k === a.c ? ' selected' : '') + '>' + c.n + '</option>'; }).join('') + '</select></div>'; }).join('');
+  renderCases();
+}
+function loadCases(){ try{ return JSON.parse(lsGet(CASE_KEY) || '[]') || []; }catch(e){ return []; } }
+function renderCases(){ var cs = loadCases(); $('sumData').textContent = '已儲存 ' + cs.length + ' 筆診斷';
+  $('caseList').innerHTML = cs.length ? cs.map(function(c, i){ return '<div class="case"><span>📁 ' + esc(c.title) + ' <span class="key-note">' + esc(c.at || '') + '</span></span><button class="btn small" type="button" data-cload="' + i + '">開啟</button><button class="btn small ghost" type="button" data-cdel="' + i + '" aria-label="刪除">🗑</button></div>'; }).join('') : '<div class="key-note">還沒有儲存的診斷。按「💾 儲存目前診斷」把目前的公司存起來，方便比較多家公司。</div>'; }
+
+function openAbout(which){ $('about').classList.add('show'); if(which === 'creator'){ setTimeout(function(){ $('creatorBox').scrollIntoView({block:'center'}); }, 30); } }
+function closeAbout(){ $('about').classList.remove('show'); lsSet(WARN_KEY, '1'); }
+
+/* ================= 跑馬燈 ================= */
+function initMarquee(){
+  var URL_ = "https://script.google.com/macros/s/AKfycbwKX0DNNbY8y4nf90BFTHtxgfqJcHHcZasRrgycl4QAe52_hkjMWSkYk4xOsqU-JPCROw/exec";
+  var KEY = PREFIX + 'marquee', REFRESH = 20 * 60 * 1000, bar = $('marqueeBar'), track = $('marqueeTrack'), lastKey = null;
+  function loadCache(){ try{ return JSON.parse(lsGet(KEY) || '[]'); }catch(e){ return []; } }
+  function appendText(c, text){ var re = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, li = 0, m; while((m = re.exec(text))){ if(m.index > li) c.appendChild(document.createTextNode(text.slice(li, m.index))); var a = document.createElement('a'); a.href = m[2]; a.textContent = m[1]; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.style.color = 'inherit'; a.style.textDecoration = 'underline'; c.appendChild(a); li = re.lastIndex; } if(li < text.length) c.appendChild(document.createTextNode(text.slice(li))); }
+  function renderM(items){
+    if(!settings.marquee || !items || !items.length) return;
+    var k = JSON.stringify(items); if(k === lastKey) return; lastKey = k; track.innerHTML = '';
+    var fr = document.createDocumentFragment();
+    function pass(){ items.forEach(function(it, i){ if(i > 0) fr.appendChild(document.createTextNode('　★　')); appendText(fr, String(it)); }); }
+    pass(); fr.appendChild(document.createTextNode('　★　')); pass(); track.appendChild(fr);
+    bar.classList.add('show'); document.body.classList.add('has-marquee');
+    track.style.animationDuration = Math.max(track.scrollWidth / 2 / 80, 10) + 's';
+  }
+  function fetchM(){ if(!settings.marquee) return; fetch(URL_, {method:'POST', body:JSON.stringify({serial:''})}).then(function(r){ return r.json(); }).then(function(d){ if(d && Array.isArray(d.marquee) && d.marquee.length){ lsSet(KEY, JSON.stringify(d.marquee)); renderM(d.marquee); } }).catch(function(){}); }
+  window.__applyMarquee = function(){ if(!settings.marquee){ bar.classList.remove('show'); document.body.classList.remove('has-marquee'); lastKey = null; } else { renderM(loadCache()); fetchM(); } };
+  renderM(loadCache()); fetchM(); setInterval(fetchM, REFRESH);
+}
+
+/* ================= PWA ================= */
+function initPwa(){
+  var dp = null, ua = navigator.userAgent || '';
+  var ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var mac = /Macintosh/.test(ua) && !ios, safari = /^((?!chrome|crios|fxios|edgios|android).)*safari/i.test(ua);
+  var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  function fbMsg(){ if(ios) return '請點畫面上的「分享」圖示，選「加入主畫面」'; if(mac && safari) return '請用選單列「檔案」→「加入 Dock」（Safari 17 以上）'; return '目前瀏覽器不支援安裝，或已安裝過'; }
+  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); dp = e; });
+  window.addEventListener('appinstalled', function(){ dp = null; toast('已加入主畫面'); });
+  document.querySelectorAll('[data-install]').forEach(function(b){
+    if(standalone){ b.style.display = 'none'; return; }
+    b.addEventListener('click', function(){ if(!dp){ toast(fbMsg()); return; } try{ dp.prompt(); dp.userChoice.then(function(){ dp = null; }); }catch(e){ toast(fbMsg()); } });
+  });
+  if('serviceWorker' in navigator && location.protocol !== 'file:'){ window.addEventListener('load', function(){ navigator.serviceWorker.register('service-worker.js').catch(function(){}); }); }
+}
+
+/* ================= 事件 ================= */
+function bind(){
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('[data-go],[data-tab],[data-sample],[data-open-about],[data-fs],[data-theme-set],[data-cload],[data-cdel]');
+    if(!t) return;
+    if(t.hasAttribute('data-go')){ showTab(+t.getAttribute('data-go')); return; }
+    if(t.hasAttribute('data-tab')){ showTab(+t.getAttribute('data-tab')); return; }
+    if(t.hasAttribute('data-open-about')){ e.preventDefault(); openAbout(t.getAttribute('data-open-about')); return; }
+    if(t.hasAttribute('data-fs')){ settings.fs = t.getAttribute('data-fs'); saveSettings(); applySettings(); return; }
+    if(t.hasAttribute('data-theme-set')){ settings.theme = t.getAttribute('data-theme-set'); saveSettings(); applySettings(); return; }
+    if(t.hasAttribute('data-sample')){ var sm = D.SAMPLES.filter(function(x){ return x.key === t.getAttribute('data-sample'); })[0]; if(sm){ S = loadSample(sm); fillForm(); recalc(); toast('已載入範例「' + sm.label.replace(/^\S+\s/, '') + '」'); } return; }
+    if(t.hasAttribute('data-cload')){ var c = loadCases()[+t.getAttribute('data-cload')]; if(c){ S = mergeState(c.s); fillForm(); recalc(); toast('已開啟「' + c.title + '」'); } return; }
+    if(t.hasAttribute('data-cdel')){ var cs = loadCases(); var i = +t.getAttribute('data-cdel'); var tt = cs[i] && cs[i].title; cs.splice(i, 1); lsSet(CASE_KEY, JSON.stringify(cs)); renderCases(); toast('已刪除「' + (tt || '') + '」'); return; }
+  });
+  document.addEventListener('input', function(e){
+    var t = e.target;
+    if(t.hasAttribute('data-f')){ S.f[t.getAttribute('data-f')] = t.value; recalc(); }
+    else if(t.hasAttribute('data-l')){ S.loan[t.getAttribute('data-l')] = t.value; if(t.getAttribute('data-l') === 'ctype') ltvHint(); recalc(); }
+    else if(t.hasAttribute('data-b')){ S[t.getAttribute('data-b')] = t.value; recalc(); }
+    else if(t.hasAttribute('data-w')){ settings.weights[t.getAttribute('data-w')] = clamp(+t.value || 0, 0, 100); saveSettings(); $('sumWeights').textContent = D.FIVE_C.map(function(c){ return c.n + ' ' + (+settings.weights[c.k] || 0); }).join('・'); recalc(); }
+    else if(t.hasAttribute('data-avt')){ settings.avoid[+t.getAttribute('data-avt')].t = t.value; saveSettings(); recalc(); }
+  });
+  document.addEventListener('change', function(e){
+    var t = e.target;
+    if(t.hasAttribute('data-q')){ (t.getAttribute('data-q') === 'ch' ? S.ch : S.co)[t.getAttribute('data-k')] = +t.value; recalc(); }
+    else if(t.hasAttribute('data-l') && t.tagName === 'SELECT'){ S.loan[t.getAttribute('data-l')] = t.value; ltvHint(); recalc(); }
+    else if(t.hasAttribute('data-b') && t.tagName === 'SELECT'){ S[t.getAttribute('data-b')] = t.value; recalc(); }
+    else if(t.hasAttribute('data-av')){ var i = t.getAttribute('data-av'); if(t.value) S.av[i] = t.value; else delete S.av[i]; recalc(); }
+    else if(t.hasAttribute('data-avc')){ settings.avoid[+t.getAttribute('data-avc')].c = t.value; saveSettings(); recalc(); }
+    else if(t.hasAttribute('data-w') || t.hasAttribute('data-avt')){ applySettings(); }
+  });
+  document.addEventListener('focusout', function(e){ var t = e.target; if(t.classList && t.classList.contains('num')){ var n = num(t.value); if(n != null) t.value = fmtN(n, n % 1 ? 2 : 0); } });
+  $('settingsBtn').addEventListener('click', function(){ toggleSettings(); });
+  $('settingsClose').addEventListener('click', function(){ toggleSettings(false); });
+  document.querySelectorAll('.set-sec').forEach(function(d){ d.addEventListener('toggle', saveFold); });
+  $('foldAllOpen').addEventListener('click', function(){ document.querySelectorAll('.set-sec').forEach(function(d){ d.open = true; }); saveFold(); });
+  $('foldAllClose').addEventListener('click', function(){ document.querySelectorAll('.set-sec').forEach(function(d){ d.open = false; }); saveFold(); });
+  $('setMarquee').addEventListener('change', function(){ settings.marquee = this.checked; saveSettings(); applySettings(); if(window.__applyMarquee) window.__applyMarquee(); });
+  $('setAutoSave').addEventListener('change', function(){ settings.autoSave = this.checked; saveSettings(); applySettings(); if(!settings.autoSave) lsDel(DRAFT_KEY); else saveDraft(); });
+  $('setAuthor').addEventListener('input', function(){ settings.author = this.value; saveSettings(); $('sumReport').textContent = [settings.org, settings.author].filter(Boolean).join('｜') || '未設定'; });
+  $('setOrg').addEventListener('input', function(){ settings.org = this.value; saveSettings(); $('sumReport').textContent = [settings.org, settings.author].filter(Boolean).join('｜') || '未設定'; });
+  $('resetWeights').addEventListener('click', function(){ settings.weights = defaultWeights(); saveSettings(); applySettings(); recalc(); toast('已恢復預設權重'); });
+  $('resetAvoid').addEventListener('click', function(){ settings.avoid = defaultAvoid(); saveSettings(); applySettings(); recalc(); toast('已恢復預設清單'); });
+  $('resetSettings').addEventListener('click', function(){ settings = clone(DEFAULTS); settings.weights = defaultWeights(); settings.avoid = defaultAvoid(); saveSettings(); applySettings(); if(window.__applyMarquee) window.__applyMarquee(); recalc(); toast('已恢復預設設定'); });
+  $('clearAll').addEventListener('click', function(){ if(!confirm('確定要清除本工具在這台瀏覽器的全部資料（設定、草稿、已儲存的診斷）？')) return; [SET_KEY, DRAFT_KEY, CASE_KEY, FOLD_KEY, WARN_KEY, TAB_KEY, PREFIX + 'marquee'].forEach(lsDel); location.reload(); });
+  $('saveCase').addEventListener('click', function(){ var title = (S.name || '未命名公司') + (S.year ? '（' + S.year + '）' : ''); var cs = loadCases(); var at = new Date().toLocaleString('zh-TW', {hour12:false});
+    var idx = cs.findIndex(function(c){ return c.title === title; }); var rec = {title:title, at:at, s:clone(S)}; if(idx >= 0) cs[idx] = rec; else cs.unshift(rec); lsSet(CASE_KEY, JSON.stringify(cs.slice(0, 50))); renderCases(); toast('已儲存「' + title + '」'); });
+  $('exportAll').addEventListener('click', function(){ download('信用5C診斷_' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify({tool:'credit-5c-risk-diagnosis', v:1, current:S, cases:loadCases(), settings:{weights:settings.weights, avoid:settings.avoid}}, null, 2), 'application/json'); });
+  $('importFile').addEventListener('change', function(){ var file = this.files[0]; if(!file) return; var rd = new FileReader();
+    rd.onload = function(){ try{ var d = JSON.parse(rd.result); if(d.current && d.current.f){ S = mergeState(d.current); }
+      if(Array.isArray(d.cases)){ var cs = loadCases(); d.cases.forEach(function(c){ if(c && c.s && c.title){ var i = cs.findIndex(function(x){ return x.title === c.title; }); if(i >= 0) cs[i] = c; else cs.push(c); } }); lsSet(CASE_KEY, JSON.stringify(cs.slice(0, 50))); }
+      if(d.settings){ if(d.settings.weights) Object.assign(settings.weights, d.settings.weights); if(Array.isArray(d.settings.avoid) && d.settings.avoid.length === D.AVOID.length) settings.avoid = d.settings.avoid; saveSettings(); }
+      fillForm(); applySettings(); recalc(); toast('匯入完成'); }catch(err){ toast('檔案格式不正確'); } };
+    rd.readAsText(file); this.value = ''; });
+  $('btnClear').addEventListener('click', function(){ S = freshState(); fillForm(); recalc(); toast('已清空，請輸入公司財報數字'); });
+  $('btnPrint').addEventListener('click', function(){ window.print(); });
+  window.addEventListener('beforeprint', function(){ O = compute(); $('printReport').innerHTML = '<div class="report">' + reportHtml() + '</div>'; });
+  $('btnCopy').addEventListener('click', function(){ copyText(reportText(), '已複製審查意見書全文'); });
+  $('btnMd').addEventListener('click', function(){ download('授信審查意見書_' + (S.name || '未命名').replace(/[\\/:*?"<>|]/g, '') + '.md', reportMd(), 'text/markdown;charset=utf-8'); });
+  $('btnPrompt').addEventListener('click', function(){ copyText(aiPrompt(), '已複製提示詞，可貼到 ChatGPT／Gemini／Claude'); });
+  $('btnScript').addEventListener('click', function(){ copyText(videoScript(), '已複製講稿大綱'); });
+  $('aboutClose').addEventListener('click', closeAbout); $('aboutOk').addEventListener('click', closeAbout);
+  $('about').addEventListener('click', function(e){ if(e.target === this) closeAbout(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && $('about').classList.contains('show')) closeAbout(); });
+}
+
+/* ================= 啟動 ================= */
+buildForm(); applySettings(); restoreFold(); fillForm(); bind(); initMarquee(); initPwa();
+var t0 = +(lsGet(TAB_KEY) || 0); showTab(isFinite(t0) ? t0 : 0); window.scrollTo(0, 0);
+if(!lsGet(WARN_KEY)) openAbout();
+window.__c5 = {compute:compute, get S(){ return S; }, reportMd:reportMd, aiPrompt:aiPrompt, videoScript:videoScript};
+})();
+</script>
+</body>
+</html>

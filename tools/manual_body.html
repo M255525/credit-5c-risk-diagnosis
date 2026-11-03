@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>信用 5C 診斷操作手冊</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2a22;--ink2:#46544b;--paper:#fffdf8;--bg:#f2efe6;--line:#ddd5c4;--brand:#1f3b2d;--accent:#b8862b}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#e6eee8;--ink2:#c0ccc4;--paper:#1a231e;--bg:#121915;--line:#33433a;--brand:#9fd3b2;--accent:#e2b65d}}
+:root[data-theme="dark"]{--ink:#e6eee8;--ink2:#c0ccc4;--paper:#1a231e;--bg:#121915;--line:#33433a;--brand:#9fd3b2;--accent:#e2b65d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-serif;line-height:1.8}
+main{max-width:880px;margin:0 auto;padding:24px 16px 48px}
+h1,h2{font-family:'Noto Serif TC',serif}
+h1{font-size:28px;margin:0 0 4px;color:var(--brand)}
+h2{font-size:20px;margin:22px 0 8px;border-left:6px solid var(--accent);padding-left:10px}
+section{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:4px 18px 14px;margin-top:14px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:top}
+a{color:#2f7a55;word-break:break-all}
+p,li{color:var(--ink2)}
+code{background:rgba(128,128,128,.15);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<main>
+<h1>信用 5C 財務風險診斷・操作手冊</h1>
+<p><a href="index.html">← 回到工具</a></p>
+
+<section>
+<h2>這是什麼</h2>
+<p>一個站在<b>銀行放款人員</b>角度的練習工具：挑一家上市櫃的農業或食品相關公司（也適用一般中小企業），輸入財報數字與借款情境，工具會算出 16 項財務比率、把它們換算成<b>信用 5C</b>（品格、能力、資本、擔保品、條件）的分數，對照<b>「創業十大避免」</b>地雷清單，最後整理成一份<b>授信審查意見書</b>，回答「這家公司值不值得借錢給它」。</p>
+<p>適合用在企業診斷輔導、財務管理或創業課程的分組作業，也可以把意見書與講稿大綱當成課程講義或 YouTube 影片的素材。</p>
+</section>
+
+<section>
+<h2>五個步驟</h2>
+<ol>
+<li><b>公司與財報</b>：先按一個範例公司看完整流程（5 家全為虛構）；要分析真實公司時按「🧹 清空」，從公開資訊觀測站抄數字。每個欄位下方有說明要抄哪一行。可直接貼上 <code>1,234,567</code> 或財報上的 <code>(30,000)</code> 負數格式。下面再填這次的<b>借款申請情境</b>：金額、年限、利率、用途、擔保品與保證人。</li>
+<li><b>品格與條件</b>：這兩個 C 不能只看財報。品格看信用紀錄、財報透明度、經營團隊、食安與環保紀錄、公私分明；條件看產業景氣、原物料、氣候疫病、客戶集中度、政策與借款用途。上市櫃公司可以查重大訊息、年報與新聞。</li>
+<li><b>5C 診斷結果</b>：總分、A～D 評等、審查建議、建議核貸額度、5C 雷達圖與每個 C 的扣分原因，下方是 16 項比率的數值、燈號、公式與「銀行為什麼看它」。</li>
+<li><b>創業十大避免</b>：自動偵測 10 個常見地雷，你可以逐條改判（有／沒有）。每條都標出對應的 C。</li>
+<li><b>授信審查意見書</b>：一鍵列印／存 PDF、複製全文、下載 Markdown；「🤖 複製 AI 深化分析提示詞」可貼到 ChatGPT／Gemini／Claude 請 AI 以審查人員角度挑戰你的判斷；「🎬 複製課程／影片講稿大綱」會依這家公司的結果產生約 10 分鐘的講稿架構。</li>
+</ol>
+<p>任何數字或選項一改，所有結果會即時重算；上方的評分條隨時顯示目前分數。</p>
+</section>
+
+<section>
+<h2>評分怎麼算</h2>
+<p><b>比率 → 分數</b>：每個比率有四個門檻點（最差、警戒、良好、最佳），分別對應 0、40、75、100 分，中間線性內插。75 分以上為「良好」、40～75 為「警戒」、40 以下為「風險」。</p>
+<div class="tw"><table>
+<tr><th>5C</th><th>預設權重</th><th>本工具怎麼算</th></tr>
+<tr><td>品格 Character</td><td>20</td><td>5 題質化選項的平均分。</td></tr>
+<tr><td>能力 Capacity</td><td>30</td><td>DSCR（×2）、新增借款後 DSCR（×2）、利息保障倍數（×1.5）、營業現金流量比率、流動比率、速動比率、營業利益率、毛利率（×0.5）的加權平均。</td></tr>
+<tr><td>資本 Capital</td><td>20</td><td>負債比率（×1.5）、負債淨值比、有息負債 ÷ EBITDA、ROE（×0.8）。</td></tr>
+<tr><td>擔保品 Collateral</td><td>15</td><td>擔保品估值 × 貸放成數 ＝ 可貸放值；可貸放值 ÷ 申請金額（覆蓋率）0.5、1.0、1.3 倍對應 40、75、100 分，再加保證人加分（具資力保證人 +12、負責人保證 +5）。</td></tr>
+<tr><td>條件 Conditions</td><td>15</td><td>6 題質化選項占 55%，營收成長率、應收帳款與存貨週轉天數、自由現金流量占 45%。</td></tr>
+</table></div>
+<p><b>評等</b>：80 分以上 A（建議核貸）、65～79 B（可核貸，附一般條件）、50～64 C（附條件核貸或降額）、50 以下 D（暫不建議核貸）。</p>
+<p><b>紅色警示會壓低分數</b>：有退票或逾期未清償、淨值為負 → 最高 45 分（D）；新增借款後 DSCR 低於 1、或營業現金流為負且現金不足以支付一年內到期本金 → 最高 64 分（C）。</p>
+<p><b>建議核貸額度</b>：在 DSCR 維持 1.25 倍的前提下，算出每年最多還得起的新增本息，再依年限與利率換算成可承作的上限；A／B 級取「申請金額」與此上限的較小值，C 級再依擔保狀況下修，D 級為 0。</p>
+<p>權重可以在「⚙ 常用設定 → 5C 權重」調整，例如比較「擔保放款」（擔保品權重高）與「信用放款」（能力、品格權重高）的差異。</p>
+</section>
+
+<section>
+<h2>16 項財務比率速查</h2>
+<div class="tw"><table>
+<tr><th>比率</th><th>公式</th><th>良好／警戒</th></tr>
+{{RATIOS}}
+</table></div>
+<p>門檻是一般授信審查常見的參考區間。農業與食品業差異很大：畜牧、養殖屬資本密集，負債比率通常較高；稻米收購、茶葉等有明顯季節性，存貨天數在收成後會暫時偏高。判讀時請對照同業平均。</p>
+</section>
+
+<section>
+<h2>創業十大避免（預設清單）</h2>
+<ol>
+{{AVOID}}
+</ol>
+<p>這是依「創業十大避免」主題整理的預設版本。若你的課程版本文字不同，可在「⚙ 常用設定 → 創業十大避免清單」逐條改寫並指定對應的 C；自動偵測規則會沿用同一列。十大避免的檢核結果<b>不另外扣分</b>（避免與比率重複計算），而是列入意見書與授信條件的說明。</p>
+</section>
+
+<section>
+<h2>⚙ 常用設定</h2>
+<ul>
+<li><b>顯示與儲存</b>：字級、淺色／深色、跑馬燈、自動保存草稿。</li>
+<li><b>5C 權重</b>、<b>創業十大避免清單</b>、<b>報告署名</b>（分析人／組別、單位／課程）。</li>
+<li><b>資料管理</b>：儲存多家公司的診斷互相比較、匯出／匯入 JSON、清除本機資料。</li>
+<li><b>關於本工具</b>：操作手冊、使用警語、創作者資訊、加入主畫面與訪客數。</li>
+</ul>
+<p>每組設定都可以單獨展開或收合，工具會記住你上次展開了哪些。</p>
+</section>
+
+<section>
+<h2>使用警語</h2>
+<ul>
+<li>本工具是教學用的授信分析練習框架。比率門檻、分數換算、5C 權重與擔保品貸放成數皆為簡化示意，與任何金融機構的實際授信政策無關；結果不代表貸款能否核准，也不構成投資、財務或法律建議。</li>
+<li>內建 5 家範例公司（禾豐食品工業、綠野蛋品畜牧、金穗米業、海灣水產養殖、青田有機農場）與其數字全部虛構，如與真實公司名稱雷同純屬巧合。</li>
+<li>分析真實上市櫃公司請以公開資訊觀測站等官方財報為準；公開發表（課程、影片）時請註明資料來源與期間，品格與條件屬主觀判斷，避免對特定公司做未經查證的負面指控。</li>
+<li>請勿輸入身分證字號、聯徵報告原件等個人資料。所有資料只存在本機瀏覽器，不會上傳；清除瀏覽器資料就會消失，請定期匯出 JSON 備份。</li>
+<li>本工具的文字說明與介面僅供教學、課程及個人使用，禁止未經授權公開發布、販售或商業化使用。</li>
+</ul>
+</section>
+
+{{CREATOR}}
+</main>
+</body>
+</html>
