@@ -266,7 +266,7 @@ ul.clean li{margin-bottom:6px}
     <div class="set-body"><div class="set-grid">
       <div><label>字級</label><div class="seg" id="fsSeg"><button type="button" data-fs="">標準</button><button type="button" data-fs="l">大</button><button type="button" data-fs="xl">特大</button></div></div>
       <div><label>介面配色</label><div class="seg" id="themeSeg"><button type="button" data-theme-set="">跟隨系統</button><button type="button" data-theme-set="light">淺色</button><button type="button" data-theme-set="dark">深色</button></div></div>
-      <div><label><input type="checkbox" id="setMarquee"> 顯示頂部跑馬燈公告</label><label><input type="checkbox" id="setAutoSave"> 自動保存目前的診斷（重新整理不會消失）</label></div>
+      <div><label><input type="checkbox" id="setAutoSave"> 自動保存目前的診斷（重新整理不會消失）</label></div>
     </div></div>
   </details>
   <details class="set-sec" data-sec="weights">
@@ -468,7 +468,7 @@ function download(name, text, type){ var b = new Blob([text], {type:type || 'tex
 /* ================= 狀態 ================= */
 function defaultAvoid(){ return D.AVOID.map(function(a){ return {t:a.t, c:a.c}; }); }
 function defaultWeights(){ var w = {}; D.FIVE_C.forEach(function(c){ w[c.k] = c.w; }); return w; }
-var DEFAULTS = {fs:'', theme:'', marquee:true, autoSave:true, author:'', org:'', weights:defaultWeights(), avoid:defaultAvoid()};
+var DEFAULTS = {fs:'', theme:'', autoSave:true, author:'', org:'', weights:defaultWeights(), avoid:defaultAvoid()};
 function freshState(){
   var f = {}; D.FIELDS.forEach(function(g){ g.items.forEach(function(it){ f[it.k] = ''; }); });
   var ch = {}, co = {};
@@ -844,9 +844,9 @@ function applySettings(){
   if(settings.theme) h.setAttribute('data-theme', settings.theme); else h.removeAttribute('data-theme');
   document.querySelectorAll('#fsSeg button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-fs') === (settings.fs || '')); });
   document.querySelectorAll('#themeSeg button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-theme-set') === (settings.theme || '')); });
-  $('setMarquee').checked = !!settings.marquee; $('setAutoSave').checked = !!settings.autoSave;
+  $('setAutoSave').checked = !!settings.autoSave;
   $('setAuthor').value = settings.author || ''; $('setOrg').value = settings.org || '';
-  $('sumDisplay').textContent = '字級 ' + ({'':'標準', l:'大', xl:'特大'}[settings.fs || ''] || '標準') + '｜' + ({'':'跟隨系統', light:'淺色', dark:'深色'}[settings.theme || '']) + '｜跑馬燈 ' + (settings.marquee ? '開' : '關') + '｜自動保存 ' + (settings.autoSave ? '開' : '關');
+  $('sumDisplay').textContent = '字級 ' + ({'':'標準', l:'大', xl:'特大'}[settings.fs || ''] || '標準') + '｜' + ({'':'跟隨系統', light:'淺色', dark:'深色'}[settings.theme || '']) + '｜自動保存 ' + (settings.autoSave ? '開' : '關');
   $('sumWeights').textContent = D.FIVE_C.map(function(c){ return c.n + ' ' + (+settings.weights[c.k] || 0); }).join('・');
   var changed = settings.avoid.some(function(a, i){ return a.t !== D.AVOID[i].t || a.c !== D.AVOID[i].c; });
   $('sumAvoid').textContent = changed ? '已自訂' : '預設版本';
@@ -869,7 +869,7 @@ function initMarquee(){
   function loadCache(){ try{ return JSON.parse(lsGet(KEY) || '[]'); }catch(e){ return []; } }
   function appendText(c, text){ var re = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, li = 0, m; while((m = re.exec(text))){ if(m.index > li) c.appendChild(document.createTextNode(text.slice(li, m.index))); var a = document.createElement('a'); a.href = m[2]; a.textContent = m[1]; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.style.color = 'inherit'; a.style.textDecoration = 'underline'; c.appendChild(a); li = re.lastIndex; } if(li < text.length) c.appendChild(document.createTextNode(text.slice(li))); }
   function renderM(items){
-    if(!settings.marquee || !items || !items.length) return;
+    if(!items || !items.length) return;
     var k = JSON.stringify(items); if(k === lastKey) return; lastKey = k; track.innerHTML = '';
     var fr = document.createDocumentFragment();
     function pass(){ items.forEach(function(it, i){ if(i > 0) fr.appendChild(document.createTextNode('　★　')); appendText(fr, String(it)); }); }
@@ -877,8 +877,7 @@ function initMarquee(){
     bar.classList.add('show'); document.body.classList.add('has-marquee');
     track.style.animationDuration = Math.max(track.scrollWidth / 2 / 80, 10) + 's';
   }
-  function fetchM(){ if(!settings.marquee) return; fetch(URL_, {method:'POST', body:JSON.stringify({serial:''})}).then(function(r){ return r.json(); }).then(function(d){ if(d && Array.isArray(d.marquee) && d.marquee.length){ lsSet(KEY, JSON.stringify(d.marquee)); renderM(d.marquee); } }).catch(function(){}); }
-  window.__applyMarquee = function(){ if(!settings.marquee){ bar.classList.remove('show'); document.body.classList.remove('has-marquee'); lastKey = null; } else { renderM(loadCache()); fetchM(); } };
+  function fetchM(){ fetch(URL_, {method:'POST', body:JSON.stringify({serial:''})}).then(function(r){ return r.json(); }).then(function(d){ if(d && Array.isArray(d.marquee) && d.marquee.length){ lsSet(KEY, JSON.stringify(d.marquee)); renderM(d.marquee); } }).catch(function(){}); }
   renderM(loadCache()); fetchM(); setInterval(fetchM, REFRESH);
 }
 
@@ -935,13 +934,12 @@ function bind(){
   document.querySelectorAll('.set-sec').forEach(function(d){ d.addEventListener('toggle', saveFold); });
   $('foldAllOpen').addEventListener('click', function(){ document.querySelectorAll('.set-sec').forEach(function(d){ d.open = true; }); saveFold(); });
   $('foldAllClose').addEventListener('click', function(){ document.querySelectorAll('.set-sec').forEach(function(d){ d.open = false; }); saveFold(); });
-  $('setMarquee').addEventListener('change', function(){ settings.marquee = this.checked; saveSettings(); applySettings(); if(window.__applyMarquee) window.__applyMarquee(); });
   $('setAutoSave').addEventListener('change', function(){ settings.autoSave = this.checked; saveSettings(); applySettings(); if(!settings.autoSave) lsDel(DRAFT_KEY); else saveDraft(); });
   $('setAuthor').addEventListener('input', function(){ settings.author = this.value; saveSettings(); $('sumReport').textContent = [settings.org, settings.author].filter(Boolean).join('｜') || '未設定'; });
   $('setOrg').addEventListener('input', function(){ settings.org = this.value; saveSettings(); $('sumReport').textContent = [settings.org, settings.author].filter(Boolean).join('｜') || '未設定'; });
   $('resetWeights').addEventListener('click', function(){ settings.weights = defaultWeights(); saveSettings(); applySettings(); recalc(); toast('已恢復預設權重'); });
   $('resetAvoid').addEventListener('click', function(){ settings.avoid = defaultAvoid(); saveSettings(); applySettings(); recalc(); toast('已恢復預設清單'); });
-  $('resetSettings').addEventListener('click', function(){ settings = clone(DEFAULTS); settings.weights = defaultWeights(); settings.avoid = defaultAvoid(); saveSettings(); applySettings(); if(window.__applyMarquee) window.__applyMarquee(); recalc(); toast('已恢復預設設定'); });
+  $('resetSettings').addEventListener('click', function(){ settings = clone(DEFAULTS); settings.weights = defaultWeights(); settings.avoid = defaultAvoid(); saveSettings(); applySettings(); recalc(); toast('已恢復預設設定'); });
   $('clearAll').addEventListener('click', function(){ if(!confirm('確定要清除本工具在這台瀏覽器的全部資料（設定、草稿、已儲存的診斷）？')) return; [SET_KEY, DRAFT_KEY, CASE_KEY, FOLD_KEY, WARN_KEY, TAB_KEY, PREFIX + 'marquee'].forEach(lsDel); location.reload(); });
   $('saveCase').addEventListener('click', function(){ var title = (S.name || '未命名公司') + (S.year ? '（' + S.year + '）' : ''); var cs = loadCases(); var at = new Date().toLocaleString('zh-TW', {hour12:false});
     var idx = cs.findIndex(function(c){ return c.title === title; }); var rec = {title:title, at:at, s:clone(S)}; if(idx >= 0) cs[idx] = rec; else cs.unshift(rec); lsSet(CASE_KEY, JSON.stringify(cs.slice(0, 50))); renderCases(); toast('已儲存「' + title + '」'); });

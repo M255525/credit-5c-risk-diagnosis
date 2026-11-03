@@ -5,7 +5,7 @@
 - 檔案：`index.html`（全部 UI 與邏輯）、`data.js`（欄位、比率門檻、5C 質化題、十大避免、5 個虛構範例）、`manual.html`（由 `node tools/build_manual.js` 用 `tools/manual_body.html` 產生，創作者區塊取自 `互動遊戲/taiwan-bird-atlas/tools/manual_tpl.html`——**改 data.js 後要重跑**）、`tools/make_icons.py`（PIL 產生 PWA 圖示）。
 - 本機預覽 port **8849**（`.claude/launch.json` 的 `credit-5c-risk-diagnosis`）。
 - 上線：GitHub Pages（Actions workflow，master 分支）https://m255525.github.io/credit-5c-risk-diagnosis/
-- 標準配備：創作者資訊、操作手冊、使用警語（頁面 warnbar＋首訪跳出，`c5rd_warned`）、PWA、訪客計數器（`m255525.credit5criskdiagnosis`）、共用跑馬燈（滑鼠移入暫停）、⚙ 常用設定（收合式 `.set-sec`）。無序號、無 AI 金鑰（只提供「複製提示詞」）。
+- 標準配備：創作者資訊、操作手冊、使用警語（頁面 warnbar＋首訪跳出，`c5rd_warned`）、PWA、訪客計數器（`m255525.credit5criskdiagnosis`）、共用跑馬燈（滑鼠移入暫停；**必備、不提供關閉開關**）、⚙ 常用設定（收合式 `.set-sec`）。無序號、無 AI 金鑰（只提供「複製提示詞」）。
 - localStorage 前綴 `c5rd_`。
 
 ## 評分邏輯（改動時注意）
