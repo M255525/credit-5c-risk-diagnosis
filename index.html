@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>信用 5C 財務風險診斷</title>
-<meta name="description" content="以銀行放款角度，用信用 5C 與財務比率診斷中小企業／農業食品企業值不值得借錢給它">
+<meta name="description" content="以銀行放款角度，用信用 5C 與財務比率診斷中小企業（農業、食品、零售、餐飲、製造等各行業）值不值得借錢給它">
 <meta name="theme-color" content="#1f3b2d">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
@@ -109,6 +109,10 @@ h3.grp::before{content:'';width:4px;height:16px;border-radius:2px;background:var
 .samples{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
 .samples button{border:1px dashed var(--brand2);background:var(--panel2);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:.84rem}
 .samples button:hover{background:var(--goodbg)}
+.samples{display:grid;gap:6px}
+.sgrp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sgl{font-size:.8rem;color:var(--sub);min-width:10.5em;font-weight:500}
+@media (max-width:520px){.sgl{flex-basis:100%;min-width:0}}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px 14px}
 .fld label{display:block;font-size:.84rem;font-weight:500;margin-bottom:3px}
 .fld .h{display:block;font-size:.74rem;color:var(--sub);margin-top:2px;line-height:1.4}
@@ -243,7 +247,7 @@ ul.clean li{margin-bottom:6px}
 <header class="top">
   <div class="toprow">
     <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" rx="12" fill="#1f3b2d"/><path d="M24 8l13 5v9c0 8.5-5.6 15-13 18-7.4-3-13-9.5-13-18v-9z" fill="none" stroke="#f3d58e" stroke-width="2.2" stroke-linejoin="round"/><rect x="17" y="25" width="3.4" height="7" rx="1" fill="#fff"/><rect x="22.3" y="21" width="3.4" height="11" rx="1" fill="#fff"/><rect x="27.6" y="17" width="3.4" height="15" rx="1" fill="#9fd3b2"/><path d="M16 19c3-4 7-5 10-4" fill="none" stroke="#9fd3b2" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <div class="ttl"><h1>信用 5C 財務風險診斷</h1><p>站在銀行放款的角度，用信用 5C、償債比率與「創業十大避免」評估一家中小企業／農業食品企業值不值得借錢給它</p></div>
+    <div class="ttl"><h1>信用 5C 財務風險診斷</h1><p>站在銀行放款的角度，用信用 5C、償債比率與「創業十大避免」評估一家中小企業值不值得借錢給它——農業、食品、零售、餐飲、製造、服務等 12 種產業各有同業判讀門檻</p></div>
     <div class="hbtns">
       <a class="hbtn" href="manual.html" target="_blank" rel="noopener">📖 操作手冊</a>
       <button class="hbtn" type="button" id="settingsBtn" aria-expanded="false">⚙ 常用設定</button>
@@ -328,15 +332,16 @@ ul.clean li{margin-bottom:6px}
 <main>
 <section class="tab panel on" id="tab0">
   <h2 class="sec">① 公司基本資料與財報數字</h2>
-  <p class="lead">挑一家上市櫃的農業或食品相關公司，從「公開資訊觀測站」抄下最近一個年度的合併財報數字；或先按下方範例看看完整流程。數字一改，所有比率與評分會即時重算。</p>
+  <p class="lead">先選<b>產業類別</b>（會套用該產業的比率判讀門檻），再挑一家上市櫃公司從「公開資訊觀測站」抄下最近一個年度的合併財報數字；或先按下方範例看看完整流程。數字一改，所有比率與評分會即時重算。</p>
   <div><b style="font-size:.88rem">載入範例（全為虛構公司）：</b></div>
   <div class="samples" id="samples"></div>
   <div class="about-row" style="margin:4px 0 6px"><button class="btn small ghost" type="button" id="btnClear">🧹 清空，自己輸入</button></div>
 
   <h3 class="grp">公司概況</h3>
   <div class="fgrid">
-    <div class="fld" style="grid-column:span 2"><label for="i_name">公司名稱</label><input type="text" id="i_name" data-b="name" placeholder="例如：某某食品股份有限公司"></div>
-    <div class="fld"><label for="i_industry">主要業務／次產業</label><input type="text" id="i_industry" data-b="industry" placeholder="例如：飼料、蛋品、冷凍食品"></div>
+    <div class="fld" style="grid-column:span 2"><label for="i_name">公司名稱</label><input type="text" id="i_name" data-b="name" placeholder="例如：某某餐飲股份有限公司"></div>
+    <div class="fld"><label for="i_ind">產業類別</label><select id="i_ind" data-b="ind"></select><span class="h" id="indHint"></span></div>
+    <div class="fld"><label for="i_industry">主要業務</label><input type="text" id="i_industry" data-b="industry" placeholder="例如：連鎖超市、手搖飲、冷凍食品"></div>
     <div class="fld"><label for="i_year">財報年度</label><input type="text" id="i_year" data-b="year" placeholder="例如：2025"></div>
     <div class="fld"><label for="i_type">公司類型</label><select id="i_type" data-b="type"><option>上市</option><option>上櫃</option><option>興櫃</option><option>未上市（中小企業）</option><option>未上市（微型企業）</option></select></div>
   </div>
@@ -372,7 +377,7 @@ ul.clean li{margin-bottom:6px}
   <div id="dash"></div>
   <h3 class="grp">財務比率明細</h3>
   <div class="tw"><table class="rt" id="ratioTable"></table></div>
-  <p class="key-note">門檻為一般授信審查常見的參考區間，不同產業（例如資本密集的畜牧、季節性的稻米收購）應再對照同業平均調整判讀。</p>
+  <p class="key-note" id="indNote"></p><p class="key-note">門檻為授信審查常見的教學參考區間，標「產業調整」的指標已依產業特性放寬或收緊；實際判讀仍應對照同業平均。</p>
   <div class="about-row" style="margin-top:16px"><button class="btn" type="button" data-go="1">← 上一步</button><button class="btn primary" type="button" data-go="3">檢核創業十大避免 →</button></div>
 </section>
 
@@ -413,7 +418,8 @@ ul.clean li{margin-bottom:6px}
     <h3 style="margin:4px 0">⚠ 使用警語</h3>
     <ul class="clean">
       <li>本工具是<b>教學用</b>的授信分析練習框架。比率門檻、分數換算、5C 權重與擔保品貸放成數都是<b>簡化示意</b>，與任何金融機構的實際授信政策無關；結果<b>不代表貸款能否核准，也不構成投資、財務或法律建議</b>。</li>
-      <li>內建的 5 家範例公司（禾豐、綠野、金穗、海灣、青田）及其數字<b>全部虛構</b>，如與真實公司名稱雷同純屬巧合。</li>
+      <li>內建的 15 家範例公司（涵蓋農業、食品、零售、電商、餐飲、製造、貿易、營建、物流、旅宿、服務業）及其數字<b>全部虛構</b>，如與真實公司名稱雷同純屬巧合。</li>
+      <li>各產業的判讀門檻為教學用參考值，實際判讀請再對照同業平均（例如聯徵中心或財報資料庫的產業財務比率）。</li>
       <li>分析真實上市櫃公司時，請以<b>公開資訊觀測站</b>等官方公告的財報為準，並注意財報期間與單位；品格與條件的判斷涉及主觀評估，公開發表時請避免對特定公司做未經查證的負面指控。</li>
       <li>請勿輸入個人身分證字號、聯徵報告原件等個人資料。所有資料只存在本機瀏覽器（localStorage），不會上傳；清除瀏覽器資料就會消失，重要的診斷請到「⚙ 常用設定 → 資料管理」匯出 JSON 備份。</li>
       <li>「創業十大避免」清單為依主題整理的預設版本，可在常用設定中改寫成你的課程版本。</li>
@@ -473,17 +479,18 @@ function freshState(){
   var f = {}; D.FIELDS.forEach(function(g){ g.items.forEach(function(it){ f[it.k] = ''; }); });
   var ch = {}, co = {};
   D.CHARACTER.forEach(function(q){ ch[q.k] = 0; }); D.CONDITIONS.forEach(function(q){ co[q.k] = 1; });
-  return {name:'', industry:'', year:'', type:'上市', f:f, loan:{amt:'', yrs:5, rate:2.5, purpose:'', ctype:'re', cval:'', guar:'owner'}, ch:ch, co:co, av:{}};
+  return {ind:'general', name:'', industry:'', year:'', type:'上市', f:f, loan:{amt:'', yrs:5, rate:2.5, purpose:'', ctype:'re', cval:'', guar:'owner'}, ch:ch, co:co, av:{}};
 }
 var settings = (function(){ var s = {}; try{ s = JSON.parse(lsGet(SET_KEY) || '{}') || {}; }catch(e){}
   var o = Object.assign(clone(DEFAULTS), s);
   if(!o.weights || typeof o.weights !== 'object') o.weights = defaultWeights();
   D.FIVE_C.forEach(function(c){ if(typeof o.weights[c.k] !== 'number') o.weights[c.k] = c.w; });
   if(!Array.isArray(o.avoid) || o.avoid.length !== D.AVOID.length) o.avoid = defaultAvoid();
+  if(o.avoid[8] && o.avoid[8].t === '輕忽法規、食安與認證') o.avoid[8].t = D.AVOID[8].t;
   return o; })();
 function saveSettings(){ lsSet(SET_KEY, JSON.stringify(settings)); }
 var S = (function(){ if(!settings.autoSave) return null; try{ var d = JSON.parse(lsGet(DRAFT_KEY) || 'null'); if(d && d.f) return mergeState(d); }catch(e){} return null; })() || loadSample(D.SAMPLES[0]);
-function mergeState(d){ var s = freshState(); s.name = d.name || ''; s.industry = d.industry || ''; s.year = d.year || ''; s.type = d.type || s.type;
+function mergeState(d){ var s = freshState(); s.ind = indOf(d.ind) ? d.ind : 'general'; s.name = d.name || ''; s.industry = d.industry || ''; s.year = d.year || ''; s.type = d.type || s.type;
   Object.keys(s.f).forEach(function(k){ if(d.f && d.f[k] != null) s.f[k] = d.f[k]; });
   if(d.loan) Object.keys(s.loan).forEach(function(k){ if(d.loan[k] != null) s.loan[k] = d.loan[k]; });
   if(d.ch) Object.keys(s.ch).forEach(function(k){ if(typeof d.ch[k] === 'number') s.ch[k] = d.ch[k]; });
@@ -508,6 +515,9 @@ function scoreOf(v, pts, dir){
 }
 function lvOf(s){ if(s == null) return 'na'; return s >= 75 ? 'good' : (s >= 40 ? 'watch' : 'bad'); }
 var LV_TXT = {good:'良好', watch:'警戒', bad:'風險', na:'資料不足'};
+function indOf(k){ return D.INDUSTRIES.filter(function(i){ return i.k === k; })[0]; }
+function curInd(){ return indOf(S && S.ind) || D.INDUSTRIES[0]; }
+function ptsOf(def){ var a = curInd().adj; return (a && a[def.k]) || def.pts; }
 function annuity(r, n){ if(!(n > 0)) return null; return r > 0 ? (1 - Math.pow(1 + r, -n)) / r : n; }
 function div(a, b){ if(a == null || b == null) return null; if(b === 0) return a > 0 ? Infinity : (a < 0 ? -Infinity : null); return a / b; }
 
@@ -521,7 +531,7 @@ function compute(){
   var newPay = (L.amt != null && fac) ? L.amt / fac : null;
   var service = (f.int != null || f.pd != null) ? (f.int || 0) + (f.pd || 0) : null;
   var R = {};
-  function put(k, v, disp){ var def = D.RATIOS.filter(function(r){ return r.k === k; })[0]; var s = def.pts ? scoreOf(v, def.pts, def.dir) : null; R[k] = {v:v, s:s, disp:disp}; }
+  function put(k, v, disp){ var def = D.RATIOS.filter(function(r){ return r.k === k; })[0]; var pts = ptsOf(def); var s = pts ? scoreOf(v, pts, def.dir) : null; R[k] = {v:v, s:s, disp:disp}; }
   put('cr', div(f.ca, f.cl));
   put('qr', (f.ca != null && f.cl != null) ? div(f.ca - (f.inv || 0), f.cl) : null);
   if(f.int === 0 && f.op != null){ put('icr', f.op >= 0 ? Infinity : -Infinity, f.op >= 0 ? '無利息負擔' : '本業虧損'); }
@@ -569,7 +579,7 @@ function compute(){
   if(R.dscr2.v != null && R.dscr2.v < 1){ flags.push('新增借款後 DSCR ' + fmtN(R.dscr2.v, 2) + ' 倍，低於 1：本業現金流量不足以支付借款本息。'); cap = Math.min(cap, 64); }
   if(f.cfo != null && f.cfo < 0 && f.cash != null && f.pd != null && f.cash < f.pd){ flags.push('營業現金流為負，且帳上現金不足以支付一年內到期本金：短期有斷鏈風險。'); cap = Math.min(cap, 64); }
   if(total != null) total = Math.min(total, cap);
-  var grade = total == null ? '—' : (total >= 80 ? 'A' : total >= 65 ? 'B' : total >= 50 ? 'C' : 'D');
+  var tg = total == null ? null : Math.round(total); var grade = tg == null ? '—' : (tg >= 80 ? 'A' : tg >= 65 ? 'B' : tg >= 50 ? 'C' : 'D');
   var REC = {
     A:['建議核貸', '還款能力與財務結構穩健，可依申請額度承作，並給予較優惠的利率條件。'],
     B:['可核貸（附一般條件）', '整體尚屬穩健，但有部分指標需追蹤；附一般授信條件（定期提供財報、維持財務比率）後承作。'],
@@ -595,15 +605,15 @@ function detectAvoid(o){
   function opt(list, sel, k){ var q = list.filter(function(x){ return x.k === k; })[0]; return q ? sel[k] : null; }
   var rules = {
     expand:function(){ var a = R.gr.v != null && R.gr.v > 40, b = f.capex != null && f.cfo != null && Math.abs(f.capex) > Math.max(f.cfo, 0) * 1.5 && Math.abs(f.capex) > 0; return a || b ? (a ? '營收成長 ' + fmtN(R.gr.v, 1) + '%' : '') + (a && b ? '、' : '') + (b ? '資本支出 ' + fmtN(Math.abs(f.capex)) + ' 超過營業現金流 1.5 倍' : '') : null; },
-    cash:function(){ var a = f.cfo != null && f.cfo < 0, b = R.qr.v != null && R.qr.v < 0.7; return a || b ? (a ? '營業現金流為負' : '') + (a && b ? '、' : '') + (b ? '速動比率 ' + fmtN(R.qr.v, 2) + ' 倍' : '') : null; },
+    cash:function(){ var a = f.cfo != null && f.cfo < 0, b = R.qr.lv === 'bad'; return a || b ? (a ? '營業現金流為負' : '') + (a && b ? '、' : '') + (b ? '速動比率 ' + fmtN(R.qr.v, 2) + ' 倍' : '') : null; },
     debt:function(){ if(f.eq != null && f.eq <= 0) return '淨值為負'; return R.dr.v != null && R.dr.v > 70 ? '負債比率 ' + fmtN(R.dr.v, 1) + '%' : null; },
     mix:function(){ var a = opt(D.CHARACTER, S.ch, 'sep') === 2, b = opt(D.CHARACTER, S.ch, 'fs') === 2; return a || b ? (a ? '公私不分／資金貸與關係人' : '') + (a && b ? '、' : '') + (b ? '財報未經會計師查核' : '') : null; },
     conc:function(){ return S.co.conc === 2 ? '前五大客戶超過 60% 或依賴單一通路' : null; },
-    margin:function(){ var a = R.gm.v != null && R.gm.v < 10, b = f.op != null && f.op < 0; return a || b ? (a ? '毛利率 ' + fmtN(R.gm.v, 1) + '%' : '') + (a && b ? '、' : '') + (b ? '營業虧損' : '') : null; },
-    stock:function(){ return R.invd.v != null && R.invd.v > 180 ? '存貨週轉 ' + fmtN(R.invd.v) + ' 天' : null; },
-    credit:function(){ return R.ard.v != null && R.ard.v > 90 ? '應收帳款週轉 ' + fmtN(R.ard.v) + ' 天' : null; },
+    margin:function(){ var a = R.gm.lv === 'bad', b = f.op != null && f.op < 0; return a || b ? (a ? '毛利率 ' + fmtN(R.gm.v, 1) + '%' : '') + (a && b ? '、' : '') + (b ? '營業虧損' : '') : null; },
+    stock:function(){ return R.invd.lv === 'bad' ? '存貨週轉 ' + fmtN(R.invd.v) + ' 天' : null; },
+    credit:function(){ return R.ard.lv === 'bad' ? '應收帳款週轉 ' + fmtN(R.ard.v) + ' 天' : null; },
     law:function(){ return S.ch.law >= 1 ? D.CHARACTER[3].o[S.ch.law][0] : null; },
-    risk:function(){ var a = S.co.raw === 2, b = S.co.climate === 2; return a || b ? (a ? '原物料價格波動大且未避險' : '') + (a && b ? '、' : '') + (b ? '氣候／疫病影響高' : '') : null; }
+    risk:function(){ var a = S.co.raw === 2, b = S.co.climate === 2; return a || b ? (a ? '原物料／進貨成本波動大且未避險' : '') + (a && b ? '、' : '') + (b ? '天災疫病或季節性影響高' : '') : null; }
   };
   return D.AVOID.map(function(a, i){
     var auto = rules[a.auto] ? rules[a.auto]() : null;
@@ -617,11 +627,11 @@ function detectAvoid(o){
 function covenants(o){
   var R = o.R, f = o.f, list = [];
   if(R.dscr2.v != null && R.dscr2.v < 1.25) list.push('財務承諾條款：每半年提供財報，償債保障比率（DSCR）須維持 1.2 倍以上，未達時應提出改善計畫或提前還款。');
-  if(R.dr.v != null && R.dr.v > 60) list.push('負債比率不得高於 ' + Math.max(60, Math.ceil(R.dr.v / 5) * 5) + '%；未經本行同意不得再向他行增加借款或為他人背書保證。');
-  if(o.C.coll != null && o.C.coll < 60) list.push('擔保不足：追加擔保品，或移送信保基金（農業信用保證基金）保證以分散風險。');
-  if(R.invd.v != null && R.invd.v > 150) list.push('存貨週轉偏慢：週轉金改以倉單質押或存貨融資方式辦理，按出貨進度還款。');
-  if(R.ard.v != null && R.ard.v > 75) list.push('應收帳款天數偏長：主要客戶貨款指定匯入本行帳戶，或改辦應收帳款融資。');
-  if(S.co.raw === 2 || S.co.climate === 2) list.push('投保農業保險（或產物保險）並以本行為受益人；主要原物料以長約或期貨避險。');
+  if(R.dr.s != null && R.dr.s < 60) list.push('負債比率不得高於 ' + Math.max(60, Math.ceil(R.dr.v / 5) * 5) + '%；未經本行同意不得再向他行增加借款或為他人背書保證。');
+  if(o.C.coll != null && o.C.coll < 60) list.push('擔保不足：追加擔保品，或移送信保基金（或農業信用保證基金）保證以分散風險。');
+  if(R.invd.s != null && R.invd.s < 50) list.push('存貨週轉偏慢：週轉金改以倉單質押或存貨融資方式辦理，按出貨進度還款。');
+  if(R.ard.s != null && R.ard.s < 55) list.push('應收帳款天數偏長：主要客戶貨款指定匯入本行帳戶，或改辦應收帳款融資。');
+  if(S.co.raw === 2 || S.co.climate === 2) list.push('投保產業相關保險（農業保險、營業中斷險、產物保險）並以本行為受益人；主要原物料或進貨以長約、期貨或匯率避險。');
   if(S.co.conc === 2) list.push('提供主要客戶合約副本，並定期揭露前五大客戶銷售比重。');
   if(S.co.use === 2) list.push('限定資金用途：償還他行借款需提出清償證明，其他用途憑發票分次撥款。');
   if(S.ch.fs >= 1) list.push('每年提供經會計師查核簽證之財務報表。');
@@ -662,7 +672,9 @@ function scoreColor(s){ return s == null ? 'var(--sub)' : s >= 75 ? 'var(--good)
 /* ================= 畫面 ================= */
 var O = null, curTab = 0;
 function buildForm(){
-  $('samples').innerHTML = D.SAMPLES.map(function(s){ return '<button type="button" data-sample="' + s.key + '">' + esc(s.label) + '</button>'; }).join('');
+  $('samples').innerHTML = D.INDUSTRIES.map(function(ind){ var list = D.SAMPLES.filter(function(s){ return s.d.ind === ind.k; }); if(!list.length) return '';
+    return '<div class="sgrp"><span class="sgl">' + ind.ic + ' ' + esc(ind.n.replace(/（.*）/, '')) + '</span>' + list.map(function(s){ return '<button type="button" data-sample="' + s.key + '">' + esc(s.label.replace(/^\S+\s/, '')) + '</button>'; }).join('') + '</div>'; }).join('');
+  $('i_ind').innerHTML = D.INDUSTRIES.map(function(i){ return '<option value="' + i.k + '">' + i.ic + ' ' + esc(i.n) + '</option>'; }).join('');
   $('finFields').innerHTML = D.FIELDS.map(function(g){
     return '<h3 class="grp">' + esc(g.grp) + '</h3><div class="fgrid">' + g.items.map(function(it){
       return '<div class="fld"><label for="f_' + it.k + '">' + esc(it.n) + '</label><input class="num" type="text" inputmode="decimal" id="f_' + it.k + '" data-f="' + it.k + '" autocomplete="off">' + (it.h ? '<span class="h">' + esc(it.h) + '</span>' : '') + '</div>';
@@ -671,21 +683,23 @@ function buildForm(){
   $('l_ctype').innerHTML = D.COLLATERAL.map(function(c){ return '<option value="' + c.k + '">' + esc(c.n) + '</option>'; }).join('');
   $('l_guar').innerHTML = D.GUARANTOR.map(function(g){ return '<option value="' + g.k + '">' + esc(g.n) + '</option>'; }).join('');
   function q(list, grp){ return list.map(function(qq){
-    return '<div class="q"><div class="qt">' + esc(qq.n) + '</div><div class="qh">' + esc(qq.h) + '</div>' + qq.o.map(function(op, i){
+    return '<div class="q"><div class="qt">' + esc(qq.n) + '</div><div class="qh" data-qh="' + qq.k + '" data-def="' + esc(qq.h) + '">' + esc(qq.h) + '</div>' + qq.o.map(function(op, i){
       return '<label class="opt"><input type="radio" name="' + grp + '_' + qq.k + '" value="' + i + '" data-q="' + grp + '" data-k="' + qq.k + '"><span>' + esc(op[0]) + '</span><span class="sc">' + op[1] + ' 分</span></label>';
     }).join('') + '</div>'; }).join(''); }
   $('qChar').innerHTML = q(D.CHARACTER, 'ch');
   $('qCond').innerHTML = q(D.CONDITIONS, 'co');
 }
 function fillForm(){
-  ['name','industry','year','type'].forEach(function(k){ var el = document.querySelector('[data-b="' + k + '"]'); if(el) el.value = S[k] || ''; });
+  ['ind','name','industry','year','type'].forEach(function(k){ var el = document.querySelector('[data-b="' + k + '"]'); if(el) el.value = S[k] || ''; });
   if(!$('i_type').value) $('i_type').value = '上市';
   Object.keys(S.f).forEach(function(k){ var el = $('f_' + k); if(el){ var v = S.f[k]; var n = num(v); el.value = (n != null && typeof v === 'number') ? fmtN(n, n % 1 ? 2 : 0) : (v == null ? '' : v); } });
   Object.keys(S.loan).forEach(function(k){ var el = document.querySelector('[data-l="' + k + '"]'); if(!el) return; var v = S.loan[k];
     if(el.classList.contains('num')){ var n = num(v); el.value = (n != null && typeof v === 'number') ? fmtN(n, n % 1 ? 2 : 0) : (v == null ? '' : v); } else el.value = v; });
   document.querySelectorAll('input[data-q]').forEach(function(r){ var sel = r.getAttribute('data-q') === 'ch' ? S.ch : S.co; r.checked = +r.value === sel[r.getAttribute('data-k')]; });
-  ltvHint();
+  ltvHint(); updateHints();
 }
+function updateHints(){ var ind = curInd(); $('indHint').textContent = ind.note;
+  document.querySelectorAll('[data-qh]').forEach(function(el){ var h = ind.hint && ind.hint[el.getAttribute('data-qh')]; el.textContent = h ? h : el.getAttribute('data-def'); }); }
 function ltvHint(){ var ct = D.COLLATERAL.filter(function(c){ return c.k === S.loan.ctype; })[0]; $('ltvHint').textContent = ct ? (ct.ltv ? '本工具以估值 × ' + Math.round(ct.ltv * 100) + '% 計算可貸放值' : '無擔保品，擔保面只看保證人') : ''; }
 
 function radarSvg(C){
@@ -735,9 +749,11 @@ function renderDash(){
   $('ratioTable').innerHTML = '<thead><tr><th>指標</th><th>5C</th><th style="text-align:right">數值</th><th>判讀</th><th>公式</th><th>銀行為什麼看它</th></tr></thead><tbody>' + D.RATIOS.map(function(d){
     var x = o.R[d.k] || {lv:'na'};
     var col = x.lv === 'na' ? 'var(--sub)' : 'var(--' + (x.lv === 'watch' ? 'warn' : x.lv) + ')';
-    var uu = d.u === '%' ? '%' : d.u === '天' ? ' 天' : ''; var th = d.pts ? (d.dir > 0 ? '良好 ≥ ' : '良好 ≤ ') + d.pts[2] + uu + '｜警戒 ' + (d.dir > 0 ? '< ' : '> ') + d.pts[1] + uu : '≥ 0 為佳';
+    var pts = ptsOf(d), adj = !!(curInd().adj && curInd().adj[d.k]);
+    var uu = d.u === '%' ? '%' : d.u === '天' ? ' 天' : ''; var th = pts ? (d.dir > 0 ? '良好 ≥ ' : '良好 ≤ ') + pts[2] + uu + '｜警戒 ' + (d.dir > 0 ? '< ' : '> ') + pts[1] + uu + (adj ? '（產業調整）' : '') : '≥ 0 為佳';
     return '<tr><td><b>' + esc(d.n) + '</b></td><td><span class="pill">' + cmap[d.c] + '</span></td><td class="v">' + rDisp(d.k, x) + '</td><td style="white-space:nowrap"><span class="dot" style="background:' + col + '"></span>' + LV_TXT[x.lv] + '<div class="key-note">' + esc(th) + '</div></td><td class="f">' + esc(d.f) + '</td><td class="w">' + esc(d.why) + '</td></tr>';
   }).join('') + '</tbody>';
+  var ind = curInd(); $('indNote').innerHTML = '目前套用：<b>' + ind.ic + ' ' + esc(ind.n) + '</b> 的判讀門檻。' + esc(ind.note) + '（可到「① 公司與財報」切換產業）';
 }
 
 function renderAvoid(){
@@ -761,7 +777,7 @@ function reportHtml(){
   var strong = [], weak = [];
   D.RATIOS.forEach(function(d){ var x = R[d.k]; if(!x || x.lv === 'na') return; if(x.lv === 'good') strong.push(d.n + ' ' + rDisp(d.k, x)); else if(x.lv === 'bad') weak.push(d.n + ' ' + rDisp(d.k, x)); });
   var h = '<div class="rh"><h2>授信審查意見書（教學練習）</h2><div>' + esc(S.name || '（未命名公司）') + '｜財報年度 ' + esc(S.year || '—') + '｜製表日 ' + dt + (sig ? '｜' + esc(sig) : '') + '</div></div>';
-  h += '<h3>一、借款人概況</h3><table><tr><th>公司名稱</th><td>' + esc(S.name || '—') + '</td><th>公司類型</th><td>' + esc(S.type || '—') + '</td></tr><tr><th>主要業務</th><td colspan="3">' + esc(S.industry || '—') + '</td></tr>' +
+  h += '<h3>一、借款人概況</h3><table><tr><th>公司名稱</th><td>' + esc(S.name || '—') + '</td><th>公司類型</th><td>' + esc(S.type || '—') + '</td></tr><tr><th>產業類別</th><td>' + esc(curInd().n) + '</td><th>主要業務</th><td>' + esc(S.industry || '—') + '</td></tr>' +
     '<tr><th>營業收入</th><td>' + fmtN(o.f.rev) + '</td><th>本期淨利</th><td>' + fmtN(o.f.ni) + '</td></tr><tr><th>資產總計</th><td>' + fmtN(o.f.ta) + '</td><th>權益總計</th><td>' + fmtN(o.f.eq) + '</td></tr></table>';
   h += '<h3>二、借款需求</h3><table><tr><th>申請金額</th><td>' + fmtN(o.L.amt) + '</td><th>期間／利率</th><td>' + fmtN(o.L.yrs, 0) + ' 年／' + fmtN(o.L.rate, 2) + '%</td></tr><tr><th>用途</th><td colspan="3">' + esc(S.loan.purpose || '—') + '</td></tr>' +
     '<tr><th>擔保品</th><td>' + esc(o.ct.n) + '（估值 ' + fmtN(num(S.loan.cval)) + '，可貸放值 ' + fmtN(o.loanable) + '）</td><th>保證人</th><td>' + esc(o.gu.n) + '</td></tr>' +
@@ -786,7 +802,7 @@ function reportText(){ var d = document.createElement('div'); d.innerHTML = repo
   return d.textContent.replace(/\n{3,}/g, '\n\n').trim(); }
 function reportMd(){
   var o = O, R = o.R, md = '# 授信審查意見書（教學練習）：' + (S.name || '未命名公司') + '\n\n';
-  md += '- 財報年度：' + (S.year || '—') + '｜公司類型：' + (S.type || '—') + '｜主要業務：' + (S.industry || '—') + '\n';
+  md += '- 財報年度：' + (S.year || '—') + '｜公司類型：' + (S.type || '—') + '｜產業類別：' + curInd().n + '｜主要業務：' + (S.industry || '—') + '\n';
   md += '- 申請：' + fmtN(o.L.amt) + '，' + fmtN(o.L.yrs) + ' 年，' + fmtN(o.L.rate, 2) + '%；用途：' + (S.loan.purpose || '—') + '\n';
   md += '- 擔保：' + o.ct.n + '（可貸放值 ' + fmtN(o.loanable) + '）；保證人：' + o.gu.n + '\n\n';
   md += '## 結論\n\n**' + (o.total == null ? '—' : Math.round(o.total)) + ' 分／' + o.grade + ' 級：' + o.rec[0] + '**。' + o.rec[1] + '\n\n建議核貸額度：' + fmtN(o.sugg) + '\n\n';
@@ -798,8 +814,8 @@ function reportMd(){
   return md;
 }
 function aiPrompt(){
-  return '你是一位台灣商業銀行的資深授信審查人員，熟悉中小企業與農業、食品產業的放款實務。\n請根據以下我用「信用 5C 財務風險診斷」整理的資料，以銀行放款的角度評估這家公司「值不值得借錢給它」：\n\n' + reportMd() +
-    '\n請你：\n1. 逐一檢視 5C（品格、能力、資本、擔保品、條件），指出我的判斷有沒有過於樂觀或悲觀之處，並說明理由。\n2. 補充這個次產業（' + (S.industry || '農業／食品業') + '）特有的授信風險，例如季節性、原物料、氣候與疫病、食安法規、政策補貼。\n3. 從「創業十大避免」的角度，提出經營者最該優先改善的 3 件事。\n4. 給出你的最終建議（核貸／附條件核貸／降額／婉拒）、建議額度與 3～5 條授信條件。\n5. 列出還需要向公司索取或查證的資料清單。\n請用繁體中文（台灣用語），條列清楚；數字只能引用上面提供的資料，推論請標示「推測」。';
+  return '你是一位台灣商業銀行的資深授信審查人員，熟悉各產業中小企業的放款實務。\n請根據以下我用「信用 5C 財務風險診斷」整理的資料，以銀行放款的角度評估這家公司「值不值得借錢給它」：\n\n' + reportMd() +
+    '\n請你：\n1. 逐一檢視 5C（品格、能力、資本、擔保品、條件），指出我的判斷有沒有過於樂觀或悲觀之處，並說明理由。\n2. 補充這個產業（' + curInd().n + (S.industry ? '：' + S.industry : '') + '）特有的授信風險，例如季節性、成本結構、天災疫病、法規與競爭。\n3. 從「創業十大避免」的角度，提出經營者最該優先改善的 3 件事。\n4. 給出你的最終建議（核貸／附條件核貸／降額／婉拒）、建議額度與 3～5 條授信條件。\n5. 列出還需要向公司索取或查證的資料清單。\n請用繁體中文（台灣用語），條列清楚；數字只能引用上面提供的資料，推論請標示「推測」。';
 }
 function videoScript(){
   var o = O, hits = o.avoid.filter(function(a){ return a.hit; });
@@ -807,7 +823,7 @@ function videoScript(){
   var lines = [
     '【課程／影片講稿大綱】銀行會借錢給「' + (S.name || '這家公司') + '」嗎？用信用 5C 看懂一家企業的財務風險',
     '',
-    '0. 開場（30 秒）：如果你是銀行放款人員，一家' + (S.industry || '農業／食品') + '公司來借 ' + fmtN(o.L.amt) + '，要「' + (S.loan.purpose || '擴充營運') + '」，你會借嗎？',
+    '0. 開場（30 秒）：如果你是銀行放款人員，一家' + (S.industry || curInd().n) + '公司來借 ' + fmtN(o.L.amt) + '，要「' + (S.loan.purpose || '擴充營運') + '」，你會借嗎？',
     '1. 什麼是信用 5C（1 分鐘）：品格（願不願意還）、能力（有沒有能力還）、資本（自己出多少錢）、擔保品（還不出來怎麼辦）、條件（外部環境與用途）。',
     '2. 先看能力——償債比率（2 分鐘）：EBITDA ' + fmtN(o.ebitda) + '，DSCR ' + rDisp('dscr', o.R.dscr) + '，借了之後變成 ' + rDisp('dscr2', o.R.dscr2) + '。用一句話解釋：一年賺到的現金夠不夠付這一年的本息。',
     '3. 再看資本（1.5 分鐘）：負債比率 ' + rDisp('dr', o.R.dr) + '、有息負債／EBITDA ' + rDisp('nde', o.R.nde) + '，說明「自己出的錢越少，銀行越緊張」。',
@@ -815,7 +831,7 @@ function videoScript(){
     '5. 品格：財報透明度、繳款紀錄、食安法規紀錄為什麼比數字更重要（1 分鐘）。',
     '6. 創業十大避免對照（2 分鐘）：這家公司踩到 ' + hits.length + ' 項' + (hits.length ? '——' + hits.map(function(a){ return a.t; }).join('、') : '') + '。對應你自己的事業，有沒有同樣的問題？',
     '7. 結論（1 分鐘）：' + (o.total == null ? '—' : Math.round(o.total)) + ' 分、' + o.grade + ' 級，「' + o.rec[0] + '」；最弱的一環是「' + (weakC[0] ? weakC[0].n : '—') + '」。給經營者的一句建議。',
-    '8. 行動呼籲：到公開資訊觀測站挑一家你熟悉的上市食品公司，用同樣的方法練習一次。',
+    '8. 行動呼籲：到公開資訊觀測站挑一家你熟悉的上市櫃公司（同產業或你自己的行業），用同樣的方法練習一次。',
     '',
     '（提醒：影片中提到真實公司時，請註明資料來源與期間，避免做出未經查證的負面評論。）'
   ];
@@ -824,7 +840,7 @@ function videoScript(){
 
 function renderChip(){
   var o = O; if(!o) return;
-  $('scoreChip').innerHTML = '<span class="grade g-' + (o.grade === '—' ? 'D' : o.grade) + '">' + o.grade + '</span><span><b>' + esc(S.name || '未命名公司') + '</b>　信用分數 <b>' + (o.total == null ? '—' : Math.round(o.total)) + '</b>・' + esc(o.rec[0]) + '・十大避免 <b>' + o.avoid.filter(function(a){ return a.hit; }).length + '</b> 項' + (o.flags.length ? '・<span class="lv-bad">🚩 ' + o.flags.length + ' 項警示</span>' : '') + '</span>';
+  $('scoreChip').innerHTML = '<span class="grade g-' + (o.grade === '—' ? 'D' : o.grade) + '">' + o.grade + '</span><span><b>' + esc(S.name || '未命名公司') + '</b> <span class="pill">' + curInd().ic + ' ' + esc(curInd().n.replace(/（.*）/, '')) + '</span>　信用分數 <b>' + (o.total == null ? '—' : Math.round(o.total)) + '</b>・' + esc(o.rec[0]) + '・十大避免 <b>' + o.avoid.filter(function(a){ return a.hit; }).length + '</b> 項' + (o.flags.length ? '・<span class="lv-bad">🚩 ' + o.flags.length + ' 項警示</span>' : '') + '</span>';
 }
 function recalc(){ O = compute(); renderChip(); if(curTab === 2) renderDash(); if(curTab === 3) renderAvoid(); if(curTab === 4) $('report').innerHTML = reportHtml(); saveDraft(); }
 function showTab(i){ curTab = clamp(i, 0, 4); lsSet(TAB_KEY, String(curTab));
@@ -923,7 +939,7 @@ function bind(){
     var t = e.target;
     if(t.hasAttribute('data-q')){ (t.getAttribute('data-q') === 'ch' ? S.ch : S.co)[t.getAttribute('data-k')] = +t.value; recalc(); }
     else if(t.hasAttribute('data-l') && t.tagName === 'SELECT'){ S.loan[t.getAttribute('data-l')] = t.value; ltvHint(); recalc(); }
-    else if(t.hasAttribute('data-b') && t.tagName === 'SELECT'){ S[t.getAttribute('data-b')] = t.value; recalc(); }
+    else if(t.hasAttribute('data-b') && t.tagName === 'SELECT'){ S[t.getAttribute('data-b')] = t.value; if(t.id === 'i_ind'){ updateHints(); toast('已套用「' + curInd().n + '」的判讀門檻'); } recalc(); }
     else if(t.hasAttribute('data-av')){ var i = t.getAttribute('data-av'); if(t.value) S.av[i] = t.value; else delete S.av[i]; recalc(); }
     else if(t.hasAttribute('data-avc')){ settings.avoid[+t.getAttribute('data-avc')].c = t.value; saveSettings(); recalc(); }
     else if(t.hasAttribute('data-w') || t.hasAttribute('data-avt')){ applySettings(); }
@@ -950,7 +966,7 @@ function bind(){
       if(d.settings){ if(d.settings.weights) Object.assign(settings.weights, d.settings.weights); if(Array.isArray(d.settings.avoid) && d.settings.avoid.length === D.AVOID.length) settings.avoid = d.settings.avoid; saveSettings(); }
       fillForm(); applySettings(); recalc(); toast('匯入完成'); }catch(err){ toast('檔案格式不正確'); } };
     rd.readAsText(file); this.value = ''; });
-  $('btnClear').addEventListener('click', function(){ S = freshState(); fillForm(); recalc(); toast('已清空，請輸入公司財報數字'); });
+  $('btnClear').addEventListener('click', function(){ var keep = S.ind; S = freshState(); S.ind = keep; fillForm(); recalc(); toast('已清空，請輸入公司財報數字'); });
   $('btnPrint').addEventListener('click', function(){ window.print(); });
   window.addEventListener('beforeprint', function(){ O = compute(); $('printReport').innerHTML = '<div class="report">' + reportHtml() + '</div>'; });
   $('btnCopy').addEventListener('click', function(){ copyText(reportText(), '已複製審查意見書全文'); });
